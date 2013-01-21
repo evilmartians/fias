@@ -1,5 +1,10 @@
 module Fias
   module Import
+    # Класс для доступа к DBF-файлам ФИАС
+    # Пример:
+    #   wrapper = DbfWrapper.new('tmp/fias')
+    #   wrapper.address_objects.record_count
+    #   wrapper.address_objects.each { |record| record.attributes }
     class DbfWrapper
       def initialize(pathspec)
         unless Dir.exists?(pathspec)
@@ -7,7 +12,7 @@ module Fias
         end
         self.pathspec = pathspec
 
-        TABLES.each do |key, dbf_name|
+        TABLES_ACCESSORS.each do |key, dbf_name|
           filename = File.join(pathspec, dbf_name)
           dbf = DBF::Table.new(filename, nil, DEFAULT_ENCODING)
 
@@ -25,7 +30,7 @@ module Fias
       end
 
       def tables
-        hash = TABLES.keys.map do |accessor|
+        hash = TABLES_ACCESSORS.keys.map do |accessor|
           [accessor, send(accessor)]
         end
       end
@@ -43,7 +48,8 @@ module Fias
         end
       end
 
-      TABLES = {
+      # Таблица соответствий аттрибутов класса DBF-файлам
+      TABLES_ACCESSORS = {
         address_object_types: 'SOCRBASE.DBF',
         current_statuses: 'CURENTST.DBF',
         actual_statuses: 'ACTSTAT.DBF',
@@ -58,18 +64,19 @@ module Fias
       }
       HOUSE_DBF_MASK = 'HOUSE??.DBF'
 
+      # Эти поля нужно отконвертировать в тип UUID после создания
       CONVERT_TO_UUID = {
         address_objects: %w(aoguid aoid previd nextid parentguid)
       }
 
       DEFAULT_ENCODING = Encoding::CP866
 
-      attr_reader   *TABLES.keys
+      attr_reader   *TABLES_ACCESSORS.keys
       attr_reader   :houses
 
       private
       attr_accessor :pathspec
-      attr_writer   *TABLES.keys
+      attr_writer   *TABLES_ACCESSORS.keys
       attr_writer   :houses
     end
   end

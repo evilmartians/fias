@@ -70,6 +70,10 @@ region = Fias::AddressObject.actual.leveled(:region).first
 region.children.actual
 ```
 
+# TODO
+
+1. Индексы.
+
 # Полезные ссылки
 
 * http://fias.nalog.ru/Public/DownloadPage.aspx

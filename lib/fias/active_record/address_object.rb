@@ -46,7 +46,7 @@ module Fias
 
     scope :sorted, order('formalname ASC')
 
-    # Наименование типа объекта
+    # Полное наименование типа объекта (город, улица)
     belongs_to :address_object_type,
       class_name: 'Fias::AddressObjectType',
       primary_key: 'shortname',

@@ -1,15 +1,17 @@
 module Fias
   module Import
     class PgImporter
+      # Класс для импорта данных из ФИАС в PostgreSQL.
+      # Используется COPY FROM STDIN.
       def initialize(raw_connection, wrapper, options = {})
         self.prefix         = options.delete(:prefix) || 'fias'
         self.raw_connection = raw_connection
         self.wrapper        = wrapper
       end
 
+      # Генерирует схему базы для ActiveRecord в виде строки
       def schema
         "".tap do |s|
-
           wrapper.tables.each do |accessor, table|
             s << %{create_table "#{table_name(accessor)}", id: false do |t|\n}
             s << dump_schema_for(accessor, table)
@@ -58,8 +60,6 @@ module Fias
           end
         end
       end
-          # alter table fias_addrobj alter column aoid TYPE uuid USING CAST(aoid as uuid);
-
 
       def import_table(accessor, table, &block)
         fields = table_fields(table)
