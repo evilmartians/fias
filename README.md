@@ -57,7 +57,14 @@ rake fias:import:placements fias:import:houses PREFIX=fias PATH=tmp/fias
 
 # Работа с данными
 
+Существующие регионы:
 
+```Fias::AddressObject.actual.leveled(:region).all```
+
+Подчиненные объекты в регионе (области, районы, столица региона):
+
+```region = Fias::AddressObject.actual.leveled(:region).first
+region.children.actual```
 
 # Полезные ссылки
 
