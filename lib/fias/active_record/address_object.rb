@@ -3,6 +3,8 @@ module Fias
     self.table_name = "#{Rails.application.config.fias.prefix}_address_objects"
     self.primary_key = 'aoid'
 
+    alias_attribute :name, :formalname
+
     # Родительские объекты (Ленобласть для Лодейнопольского района)
     # Для "проезд 1-й Конной Лахты 2-й" - Санкт-Петербург и Ленинград.
     # Блядь, 1-й проезд 2-й Конной Лахты, ебануться!
