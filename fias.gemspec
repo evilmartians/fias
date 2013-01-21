@@ -7,7 +7,7 @@ Gem::Specification.new do |gem|
   gem.name          = "fias"
   gem.version       = Fias::VERSION
   gem.authors       = ["Victor Sokolov"]
-  gem.email         = ["gzigzigzeo@gmail.com"]
+  gem.email         = ["gzigzigzeo@evilmartians.com"]
   gem.description   = %q{Ruby wrapper to FIAS database}
   gem.summary       = %q{Ruby wrapper to FIAS database}
   gem.homepage      = "http://github.com/evilmartians/fias"
