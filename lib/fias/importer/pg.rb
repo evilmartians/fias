@@ -27,9 +27,12 @@ module Fias
         copy_from_stdin(table_name, columns)
 
         dbf.each_with_index do |record, index|
-          data = record.to_a
-          put_data(data)
-          yield(name, data, index) if block_given?
+          should_import = yield(name, record.attributes, index) if block_given?
+
+          unless should_import === false
+            data = record.to_a
+            put_data(data)
+          end
         end
 
         put_copy_end

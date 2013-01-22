@@ -1,9 +1,10 @@
+# encoding: utf-8
 module Fias
   class AddressObject < ActiveRecord::Base
+    # TODO: Тут надо понять как префикс передать
     if defined?(Rails)
       self.table_name = "#{Rails.application.config.fias.prefix}_address_objects"
     else
-      # TODO: Тут надо понять как префикс передать
       self.table_name = "fias_address_objects"
     end
 
@@ -51,12 +52,13 @@ module Fias
     }
 
     scope :sorted, order('formalname ASC')
+    scope :with_socnames, includes(:address_object_type)
 
     # Полное наименование типа объекта (город, улица)
     belongs_to :address_object_type,
-      class_name: 'Fias::AddressObjectType',
-      primary_key: 'shortname',
-      foreign_key: 'scname'
+      class_name: '::Fias::AddressObjectType',
+      foreign_key: 'shortname',
+      primary_key: 'scname'
 
     # Есть ли исторические варианты записи?
     def has_history?
@@ -72,11 +74,53 @@ module Fias
       AOLEVELS.key(aolevel)
     end
 
+    # Название с сокращением / полным наименованием города
+    # "г. Санкт-Петербург" / "город Санкт-Петербург"
+    #
+    #   full ? "Город"" : г.
+    #   explicit == false ? "Дагестан" вместо "Республика Дагестан", но всегда
+    #                       "Самарская область"
+    def abbrevated(full = true, explicit = false)
+      no_shortname = shortname.blank? || (full && address_object_type.blank?)
+
+      must_abbrevate = explicit ||
+                       SHN_EXPLICIT.include?(shortname) ||
+                       SHN_EXPLICIT_FOR_REGIONS.include?(regioncode)
+
+
+      return name if no_shortname
+      return name unless must_abbrevate
+
+      abbr = if full
+        address_object_type.name
+      else
+        if shortname.in?(SHN_NODOT)
+          shortname
+        else
+          "#{shortname}."
+        end
+      end
+
+      if shortname.in?('респ г')
+        "#{abbr} #{name}"
+      else
+        abbr = abbr.mb_chars.downcase unless shortname.in?(SHN_NODCASE)
+        "#{name} #{abbr}"
+      end
+    end
+
     # Коды уровня адресного объекта
     AOLEVELS = {
       region: 1, autonomy: 2, district: 3, city: 4,
       territory: 5, settlement: 6, street: 7,
       additional_territory: 90, additional_territory_slave: 91
     }
+
+    # Дописывать сокращения обязательно, "Самарская" выглядит странно,
+    # всегда должно быть "Самарская область", а "Дагестан" понятно и так.
+    SHN_EXPLICIT = %w(обл АО край Аобл)
+    SHN_EXPLICIT_FOR_REGIONS = %w(07 09 20 21)
+    SHN_NODOT = %w(край АО Чувашия) # Не дописывать точку к сокращению
+    SHN_NODCASE = %w(АО Чувашия Аобл) # Не даункезить короткое название даже если оно в конце
   end
 end

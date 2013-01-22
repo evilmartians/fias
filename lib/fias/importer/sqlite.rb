@@ -5,23 +5,27 @@ module Fias
       def import_table(name, table_name, dbf, &block)
         truncate_table(table_name)
 
+        qmarks = ['?'] * dbf.columns.keys.size
+        qmarks = qmarks.join(', ')
+
         dbf.each_with_index do |record, index|
           data = record.attributes
-          columns = data.keys.join(', ')
-          qmarks = ['?'] * data.keys.size
-          qmarks = qmarks.join(', ')
 
-          values = data.values.map do |value|
-            if value.is_a?(Date)
-              value.to_s
-            else
-              value
+          should_import = yield(name, data, index) if block_given?
+
+          unless should_import === false
+            columns = data.keys.join(', ')
+
+            values = data.values.map do |value|
+              if value.is_a?(Date)
+                value.to_s
+              else
+                value
+              end
             end
+
+            connection.execute("INSERT INTO #{table_name} (#{columns}) VALUES (#{qmarks});", values)
           end
-
-          connection.execute("INSERT INTO #{table_name} (#{columns}) VALUES (#{qmarks});", values)
-
-          yield(name, data, index) if block_given?
         end
       end
 

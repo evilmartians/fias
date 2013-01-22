@@ -40,6 +40,8 @@ namespace :fias do
   task may_be_rails(:create_tables) do
     within_connection do |wrapper, importer|
       tables = wrapper.tables(only)
+      # TODO: Добавить во враппер tables, это убрать
+      raise "DBF file not found for: #{key}" if tables.keys.any? { |key| key.nil? }
       ActiveRecord::Schema.define do
         eval(importer.schema(tables))
       end

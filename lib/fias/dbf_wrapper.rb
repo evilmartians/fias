@@ -5,6 +5,9 @@ module Fias
   #   wrapper = Fias::DbfWrapper.new('tmp/fias')
   #   wrapper.address_objects.record_count
   #   wrapper.address_objects.each { |record| record.attributes }
+  #
+  # TODO: Добавить в инишилайзер tables, чтобы при создании проверять
+  # их наличие в базе
   class DbfWrapper
     # Открывает DBF-файлы ФИАСа
     def initialize(pathspec)
@@ -26,7 +29,9 @@ module Fias
     # Возвращает хеш {аксессор dbf-таблицы => таблица}
     # На входе массив названий таблиц (строки)
     def tables(*only)
+      only = only.first if only.first.is_a?(Array)
       only = only.map(&:to_s)
+
       hash = DBF_ACCESSORS.keys.map do |accessor|
         accessor_s = accessor.to_s
         is_houses = only.include?('houses') && accessor_s.starts_with?('house')

@@ -51,21 +51,30 @@ rake fias:import PREFIX=fias PATH=tmp/fias ONLY=houses
 
 # Импорт данных в память (для рейк тасок)
 
-```
-ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: ':memory:')
-connection = ActiveRecord::Base.connection.raw_connection
+```ruby
+ActiveRecord::Base.configurations['fias'] = {
+  :adapter  => 'sqlite3',
+  :database => ':memory:'
+}
+Fias::AddressObject.establish_connection :fias
 
-wrapper = Fias::DbfWrapper.new('tmp/fias')
-importer = Fias::Importer.build(adapter: 'sqlite3', connection: connection)
-tables = wrapper.tables(:address_objects) # Или без параметров
+fias = Fias::DbfWrapper.new('tmp/fias')
+importer = Fias::Importer.build(
+  adapter: 'sqlite3', connection: Fias::AddressObject.connection.raw_connection
+)
+tables = fias.tables(:address_objects)
 
-ActiveRecord::Schema.define do
+# Мигрейт. В таком виде так как стандартный мигратор всегда открывает новое
+# соединение с БД, а в случае с SQLite это означает пересоздание базы :memory:.
+Fias::AddressObject.connection.instance_exec do
   eval(importer.schema(tables))
 end
 
-importer.import(tables) do |name, data, index|
-  break if index > 300
+importer.import(tables) do |name, record, index|
+  record[:aclevel] == 1 # Только активные
 end
+
+Fias::AddressObject.count # И дальше импорт
 ```
 
 # Некоторые замечания про ФИАС
@@ -83,13 +92,13 @@ end
 
 Существующие регионы:
 
-```
+```ruby
 Fias::AddressObject.actual.leveled(:region).all
 ```
 
 Подчиненные объекты в регионе (области, районы, столица региона):
 
-```
+```ruby
 region = Fias::AddressObject.actual.leveled(:region).first
 region.children.actual
 ```
