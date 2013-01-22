@@ -5,7 +5,7 @@ module Fias
       def import_table(name, table_name, dbf, &block)
         truncate_table(table_name)
 
-        dbf.each do |record|
+        dbf.each_with_index do |record, index|
           data = record.attributes
           columns = data.keys.join(', ')
           qmarks = ['?'] * data.keys.size
@@ -21,7 +21,7 @@ module Fias
 
           connection.execute("INSERT INTO #{table_name} (#{columns}) VALUES (#{qmarks});", values)
 
-          yield(name, data) if block_given?
+          yield(name, data, index) if block_given?
         end
       end
 

@@ -18,7 +18,7 @@ bar = ProgressBar.new(wrapper.address_objects.record_count)
 
 importer.import(tables) do
   bar.increment!
-  break if bar.count == 10
+  break if bar.count == 100
 end
 
 puts Fias::AddressObject.first.inspect

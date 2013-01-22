@@ -49,6 +49,25 @@ rake fias:import PREFIX=fias PATH=tmp/fias ONLY=houses
 
 Поддерживается импорт в Postgres и SQLite (нужно для :memory: баз)
 
+# Импорт данных в память (для рейк тасок)
+
+```
+ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: ':memory:')
+connection = ActiveRecord::Base.connection.raw_connection
+
+wrapper = Fias::DbfWrapper.new('tmp/fias')
+importer = Fias::Importer.build(adapter: 'sqlite3', connection: connection)
+tables = wrapper.tables(:address_objects) # Или без параметров
+
+ActiveRecord::Schema.define do
+  eval(importer.schema(tables))
+end
+
+importer.import(tables) do |name, data, index|
+  break if index > 300
+end
+```
+
 # Некоторые замечания про ФИАС
 
 1. ФИАС хранит историю изменений информации адресных объектов. Например,

@@ -26,10 +26,10 @@ module Fias
         truncate_table(table_name)
         copy_from_stdin(table_name, columns)
 
-        dbf.each_with_index do |record|
+        dbf.each_with_index do |record, index|
           data = record.to_a
           put_data(data)
-          yield(name, data) if block_given?
+          yield(name, data, index) if block_given?
         end
 
         put_copy_end
