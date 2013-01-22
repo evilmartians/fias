@@ -1,6 +1,12 @@
 module Fias
   class AddressObject < ActiveRecord::Base
-    self.table_name = "#{Rails.application.config.fias.prefix}_address_objects"
+    if defined?(Rails)
+      self.table_name = "#{Rails.application.config.fias.prefix}_address_objects"
+    else
+      # TODO: Тут надо понять как префикс передать
+      self.table_name = "fias_address_objects"
+    end
+
     self.primary_key = 'aoid'
 
     alias_attribute :name, :formalname

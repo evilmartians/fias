@@ -21,4 +21,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'rake'
   gem.add_dependency 'activerecord', '> 3'
   gem.add_dependency 'progress_bar'
+  gem.add_development_dependency 'pg'
+  gem.add_development_dependency 'sqlite3'
 end

@@ -16,33 +16,38 @@ gem 'fias', git: 'https://github.com/evilmartians/kladr.git'
 
 2. Скачать и распаковать базу ФИАС в tmp/fias (по умолчанию)
 
-# Создание таблиц в базе данных
+# Импорт структуры данных
 
 Возможны два варианта:
 
 ```
-rake fias:create_tables [DATABASE_URL=... PREFIX=... PATH=...]
+rake fias:create_tables [DATABASE_URL=... PREFIX=... PATH=... ONLY=...]
 ```
 
 Либо:
 
 ```
-rails g fias:migration [--path=... --prefix=...]
+rails g fias:migration [--path=... --prefix=... --only=...]
 ```
 
 Первый вариант - для использования гема вне рельсов, либо для случая, когда
 актуальная база ФИАС будет использоваться только для локального мапинга, и
 на продакшн попасть не должна.
 
+В параметре only можно передать имена нужных таблиц, houses - все
+таблицы домов.
+
 # Импорт данных
 
 ```
-rake fias:import:placements fias:import:houses PREFIX=fias PATH=tmp/fias
+rake fias:import PREFIX=fias PATH=tmp/fias ONLY=address_objects
+rake fias:import PREFIX=fias PATH=tmp/fias ONLY=houses
 ```
 
-Импорт данных разделен на два шага, по скольку, не всегда нужны данные
-о строениях, а их почти в 20 раз больше, чем остальных. В большинстве случаев
-достаточно городов и улиц.
+Первый пример импортирует только адресные объекты (без справочников),
+второй - только дома.
+
+Поддерживается импорт в Postgres и SQLite (нужно для :memory: баз)
 
 # Некоторые замечания про ФИАС
 

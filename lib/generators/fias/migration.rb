@@ -4,14 +4,18 @@ module Fias
 
     class_option :prefix, type: :string, default: :fias, desc: 'Table names prefix'
     class_option :path, type: :string, default: 'tmp/fias', desc: 'Path to FIAS dbfs'
+    class_option :only, type: :string, default: '', desc: 'Only tables'
 
     source_root File.expand_path("../templates", __FILE__)
 
     def generate_migration
-      wrapper = Fias::Import::DbfWrapper.new(options.path)
-      importer = wrapper.build_importer(prefix: options.prefix)
-      @schema = importer.schema
-      @schema.gsub!("\n", "\n\t\t")
+      only = options.only.split(',').map(&:strip)
+      wrapper = Fias::DbfWrapper.new(options.path)
+      importer = Fias::Importer.build(prefix: options.prefix)
+
+      tables = wrapper.tables(only)
+      @schema = importer.schema(tables)
+      @schema.gsub!("\n", "\n    ")
 
       migration_template 'create_fias_tables.rb', 'db/migrate/create_fias_tables'
     end
