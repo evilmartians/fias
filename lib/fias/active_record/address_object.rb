@@ -11,6 +11,9 @@ module Fias
     self.primary_key = 'aoid'
 
     alias_attribute :name, :formalname
+    alias_attribute :reference, :aoguid # UUID адресного объекта,
+                                        # для Ленинграда и Петербурга одинаковы
+
 
     # Родительские объекты (Ленобласть для Лодейнопольского района)
     # Для "проезд 1-й Конной Лахты 2-й" - Санкт-Петербург и Ленинград.
@@ -52,7 +55,7 @@ module Fias
     }
 
     scope :sorted, order('formalname ASC')
-    scope :with_socnames, includes(:address_object_type)
+    scope :with_types, includes(:address_object_type)
 
     # Полное наименование типа объекта (город, улица)
     belongs_to :address_object_type,
@@ -81,31 +84,43 @@ module Fias
     #   explicit == false ? "Дагестан" вместо "Республика Дагестан", но всегда
     #                       "Самарская область"
     def abbrevated(full = true, explicit = false)
-      no_shortname = shortname.blank? || (full && address_object_type.blank?)
+      case aolevel_sym
+      when :region
+        # "Ханты-Мансийский Автономный округ - Югра"
+        return name if regioncode == '86'
 
-      must_abbrevate = explicit ||
-                       SHN_EXPLICIT.include?(shortname) ||
-                       SHN_EXPLICIT_FOR_REGIONS.include?(regioncode)
+        no_shortname = shortname.blank? || (full && address_object_type.blank?)
+        return name if no_shortname
 
+        ending = name[-2..-1]
 
-      return name if no_shortname
-      return name unless must_abbrevate
+        # В конец ставить если кончается на -ая -ий или это Чувашия
+        explicit_append = SHN_MUST_APPEND_TO_ENDINGS.include?(ending) ||
+                          shortname == 'Чувашия'
 
-      abbr = if full
-        address_object_type.name
-      else
-        if shortname.in?(SHN_NODOT)
-          shortname
+        # Дописывать сокращение нужно если либо заставили - либо оно должно
+        # быть по правилам русского языка
+        must_abbrevate = explicit || explicit_append
+
+        return name unless must_abbrevate
+
+        abbr = full ? address_object_type.name : shortname
+
+        # Точка не ставится для АО, Аобл или если это "Автономная область"
+        abbr = "#{abbr}." unless shortname.in?(SHN_MUST_NOT_APPEND_DOT) || full
+
+        if shortname.in?(SHN_PREPEND_BY_DEFAULT) && not(explicit_append)
+          "#{abbr} #{name}"
         else
-          "#{shortname}."
+          # Сокращаются все длинные названия типов (Республика, Край),
+          # кроме Чувашии и все короткие, кроме АО, Аобл
+          if shortname != 'Чувашия'
+            abbr = abbr.mb_chars.downcase if full || not(shortname.in?(SHN_NODCASE))
+          end
+          "#{name} #{abbr}"
         end
-      end
-
-      if shortname.in?('респ г')
-        "#{abbr} #{name}"
       else
-        abbr = abbr.mb_chars.downcase unless shortname.in?(SHN_NODCASE)
-        "#{name} #{abbr}"
+        "#{shortname}. #{name}"
       end
     end
 
@@ -118,9 +133,9 @@ module Fias
 
     # Дописывать сокращения обязательно, "Самарская" выглядит странно,
     # всегда должно быть "Самарская область", а "Дагестан" понятно и так.
-    SHN_EXPLICIT = %w(обл АО край Аобл)
-    SHN_EXPLICIT_FOR_REGIONS = %w(07 09 20 21)
-    SHN_NODOT = %w(край АО Чувашия) # Не дописывать точку к сокращению
-    SHN_NODCASE = %w(АО Чувашия Аобл) # Не даункезить короткое название даже если оно в конце
+    SHN_MUST_APPEND_TO_ENDINGS = %w(ая ий)
+    SHN_MUST_NOT_APPEND_DOT = %w(край АО Чувашия) # Не дописывать точку к сокращению
+    SHN_NODCASE = %w(АО Аобл Чувашия) # Не даункезить короткое название даже если оно в конце
+    SHN_PREPEND_BY_DEFAULT = %w(Респ г) # Ставить в начало по-умолчанию
   end
 end
