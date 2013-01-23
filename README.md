@@ -88,6 +88,86 @@ Fias::AddressObject.count # И дальше импорт
 образования хранится в поле AOGUID. Из внешних таблиц логично ссылаться
 на AOGUID, а не на AOID.
 
+# Маппинг, он же итерирование
+
+Задача заключается в поиске соответствий записей ФИАСа записям таблицы
+в базе приложения.
+
+На примере регионов:
+
+```ruby
+# Будем искать соответствия регионов сайта регионам в ФИАС
+scope = Region
+fias_scope = Fias::AddressObject.leveled(:region)
+
+# Обработчик событий итератора
+matcher = ->(action, record, *objects) {
+  match = objects.first
+
+  case action
+
+  # Появилась новая запись в ФИАСе
+  when :created
+    puts "Region #{match.abbrevated}"
+    Region.create!(
+      fias_reference: match.id,
+      title: match.abbrevated
+    )
+
+  # Элемент в ФИАСе обновлен, нужно (?) обновить базу приложения
+  when :updated
+    record.update_attributes(
+      title: match.abbrevated,
+      fias_reference: match.id
+    )
+    puts "#{record.title} became #{match.abbrevated}"
+
+  # Объект в ФИАСе был, но из актуального состояния перешел в неактуальное.
+  # Типа, Припять: умерший город.
+  # Скорее всего, такой элемент в базе приложения нужно скрыть.
+  when :deleted
+    raise NotImplementedError, "#{record.title} #{objects.first.abbrevated}"
+
+  # Элемент в ФИАСе разделился: например, поселение Черто-Полохово
+  # было преобразовано в две деревни: Чертово и Полохово
+  # В этом случае objects это новые версии объекта.
+  when :split
+    raise NotImplementedError
+
+  # Элемент в ФИАСе объединился
+  # Типа, присоединили Московскую область к Москве
+  # В этом случае objects.first это запись ФИАС о новом объекте, а остальные
+  # элементы objects - записи ФИАС объединившихся объектов.
+  when :joined
+    raise NotImplementedError
+
+  # Элементу базы приложения нет соответствия в ФИАСе пытаемся сопоставить
+  # Вообще говоря, лучше новые соответствия модерировать.
+  when :match
+    match = objects.detect { |b| b.actual? || b.name == record.title }
+    if match.present?
+      record.update_attributes(
+        title: match.abbrevated,
+        fias_reference: match.id
+      )
+      puts "#{record.title} became #{match.abbrevated} (new)"
+    else
+      puts "Record not found #{record.title}"
+    end
+
+  else
+    raise 'Unknown action!'
+  end
+}
+
+# Итерирует существующие в базе приложения элементы
+fias_scope.match_existing(scope, :fias_reference, :title, &matcher)
+
+# Итерирует отсутствующие в базе приложения, но имеющиеся в скоупе
+# ФИАСа адреса.
+fias_scope.actual.match_missing(scope, :fias_reference, &matcher)
+```
+
 # Работа с данными
 
 Существующие регионы:

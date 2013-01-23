@@ -164,33 +164,47 @@ module Fias
     end
 
     class << self
-      def match_existing(scope, fias_key_field, title_field, &block)
+      # Подробное описание см. в README
+      # TODO: OPERSTATUS
+      def match_existing(scope, fias_key_accessor, title_field_accessor, &block)
         scope.find_each do |record|
-          aoid = record[fias_key_field]
-          title = record[title_field]
+          aoid = record.send(fias_key_accessor)
+          title = record.send(title_field_accessor)
 
           if aoid.present?
             match = scoped.find_by_aoid(aoid)
+
             if match.present?
               unless match.actual?
                 next_versions = match.next_versions
-                next_versions = match.previous_versions
+
                 if next_versions.empty?
-                  yield(record, :deleted, match)
+                  yield(:deleted, record, match)
                 elsif next_versions.count == 1
-                  if previous_versions.count == 1
-                    yield(record, :updated, next_versions.first)
+                  next_version = next_versions.first
+                  previous_versions_of_current = next_version.previous_versions
+
+                  if previous_versions_of_current.count == 1
+                    yield(:updated, record, next_version)
                   else
-                    yield(record, :joined, next_versions.first, previous_versions)
+                    yield(:joined, record, next_version, previous_versions_of_current)
                   end
                 elsif next_versions.count > 1
-                  yield(record, :split, next_versions)
+                  yield(:split, record, next_versions)
                 end
               end
             end
           else
             matches = scoped.matching(title)
-            yield(record, :new_match, *matches)
+            yield(:match, record, *matches)
+          end
+        end
+      end
+
+      def match_missing(scope, address_object_key_field, &block)
+        scoped.each do |address_object|
+          unless scope.where(address_object_key_field => address_object.aoid).exists?
+            yield(:created, nil, address_object)
           end
         end
       end
