@@ -11,9 +11,7 @@ module Fias
     self.primary_key = 'aoid'
 
     alias_attribute :name, :formalname
-    alias_attribute :reference, :aoguid # UUID адресного объекта,
-                                        # для Ленинграда и Петербурга одинаковы
-
+    alias_attribute :id, :aoid
 
     # Родительские объекты (Ленобласть для Лодейнопольского района)
     # Для "проезд 1-й Конной Лахты 2-й" - Санкт-Петербург и Ленинград.
@@ -123,7 +121,8 @@ module Fias
 
         # Если название кончается на -ая -ий - по правилам русского языка
         # нужно дописать в конец "область", "край"
-        must_append = SHN_MUST_APPEND_TO_ENDINGS.include?(ending)
+        must_append = SHN_MUST_APPEND_TO_ENDINGS.include?(ending) ||
+                      shortname == 'Чувашия'
 
         must_abbrevate = must_append ||
                          shortname == 'Чувашия' ||
@@ -164,22 +163,35 @@ module Fias
       end
     end
 
-    # Выбирает лучшее совпадение из возвращенного matching
-    # Пример:
-    #
-    #
     class << self
-      def match_existing(scope, reference_field, title_field, &block)
-        scope.find_each do |object|
-          reference = object[reference_field]
-          title = object[title_field]
+      def match_existing(scope, fias_key_field, title_field, &block)
+        scope.find_each do |record|
+          aoid = record[fias_key_field]
+          title = record[title_field]
 
-          matches = if reference.blank?
-            scoped.matching(title)
+          if aoid.present?
+            match = scoped.find_by_aoid(aoid)
+            if match.present?
+              unless match.actual?
+                next_versions = match.next_versions
+                next_versions = match.previous_versions
+                if next_versions.empty?
+                  yield(record, :deleted, match)
+                elsif next_versions.count == 1
+                  if previous_versions.count == 1
+                    yield(record, :updated, next_versions.first)
+                  else
+                    yield(record, :joined, next_versions.first, previous_versions)
+                  end
+                elsif next_versions.count > 1
+                  yield(record, :split, next_versions)
+                end
+              end
+            end
           else
-            scoped.actual.where(aoguid: reference)
+            matches = scoped.matching(title)
+            yield(record, :new_match, *matches)
           end
-          yield(object, matches)
         end
       end
     end
