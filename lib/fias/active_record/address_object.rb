@@ -1,4 +1,5 @@
 # encoding: utf-8
+# TODO: Поделить на файлы
 module Fias
   class AddressObject < ActiveRecord::Base
     # TODO: Тут надо понять как префикс передать
@@ -42,6 +43,12 @@ module Fias
       foreign_key: 'aoid',
       primary_key: 'nextid'
 
+    # Полное наименование типа объекта (город, улица)
+    belongs_to :address_object_type,
+      class_name: '::Fias::AddressObjectType',
+      foreign_key: 'shortname',
+      primary_key: 'scname'
+
     # Актуальные записи (активные в настоящий момент)
     # Проверено, что livestatus уже достаточен для идентификации
     # актуальных объектов, вопреки показаниям вики.
@@ -67,14 +74,12 @@ module Fias
       scope.order('aolevel ASC, centstatus DESC')
     }
 
+    scope :same_region, ->(address_object) {
+      where(regioncode: address_object.regioncode)
+    }
+
     # Значимые поселения
     scope :central, where('centstatus > 0')
-
-    # Полное наименование типа объекта (город, улица)
-    belongs_to :address_object_type,
-      class_name: '::Fias::AddressObjectType',
-      foreign_key: 'shortname',
-      primary_key: 'scname'
 
     def has_history?
       previd.present?
@@ -154,7 +159,7 @@ module Fias
           "#{name} #{abbr}"
         end
       else
-        abbr = if full
+        abbr = if mode == :long
           address_object_type.try(:name)
         else
           shortname
