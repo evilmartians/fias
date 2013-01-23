@@ -7,7 +7,7 @@ module Fias
   #   wrapper.address_objects.each { |record| record.attributes }
   #
   # TODO: Добавить в инишилайзер tables, чтобы при создании проверять
-  # их наличие в базе
+  # их наличие на диске
   class DbfWrapper
     # Открывает DBF-файлы ФИАСа
     def initialize(pathspec)
@@ -27,7 +27,19 @@ module Fias
     end
 
     # Возвращает хеш {аксессор dbf-таблицы => таблица}
-    # На входе массив названий таблиц (строки)
+    # На входе массив названий таблиц (строки), без параметров - все
+    # Макрос houses вернет все таблицы домов
+    #
+    # Пример:
+    #   wrapper = Fias::DbfWrapper.new('tmp/fias')
+    #   wrapper.tables(%w(address_objects address_object_types houses))
+    #   ... {
+    #   ...  address_objects: Dbf::Table(...),
+    #   ...  address_object_types: Dbf::Table(...),
+    #   ...  house1: Dbf::Table(...),
+    #   ...  ...
+    #   ...  house99: Dbf::Table(...)
+    #   ... }
     def tables(*only)
       only = only.first if only.first.is_a?(Array)
       only = only.map(&:to_s)

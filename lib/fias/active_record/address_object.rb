@@ -30,17 +30,19 @@ module Fias
       primary_key: 'aoguid',
       foreign_key: 'parentguid'
 
-    # Предыдущая историческая версия названия (Ленинград для Питера)
-    belongs_to :next_version,
+    # Предыдущие исторические версии названия (Ленинград для Питера)
+    # Может быть несколько, если произошло слияние
+    has_many :previous_versions,
       class_name: 'AddressObject',
-      primary_key: 'aoid',
-      foreign_key: 'nextid'
+      foreign_key: 'aoid',
+      primary_key: 'previd'
 
-    # Следующая историческая версия названия (Питер для Ленинграда)
-    belongs_to :previous_version,
+    # Следующая исторические версии названия (Питер для Ленинграда)
+    # Может быть несколько, если произошло разделение
+    has_many :next_versions,
       class_name: 'AddressObject',
-      primary_key: 'aoid',
-      foreign_key: 'previd'
+      foreign_key: 'aoid',
+      primary_key: 'nextid'
 
     # Актуальные записи (активные в настоящий момент)
     # Проверено, что livestatus уже достаточен для идентификации
@@ -56,6 +58,19 @@ module Fias
 
     scope :sorted, order('formalname ASC')
     scope :with_types, includes(:address_object_type)
+    scope :matching, ->(name) {
+      scope = if self.connection.adapter_name
+        where(%{ "formalname" @@ ? OR ? @@ "formalname"}, name, name)
+      else
+        where('formalname LIKE ?', "%#{name}%")
+      end
+
+      # Первыми идут центральные и крупные поселения
+      scope.order('aolevel ASC, centstatus DESC')
+    }
+
+    # Значимые поселения
+    scope :central, where('centstatus > 0')
 
     # Полное наименование типа объекта (город, улица)
     belongs_to :address_object_type,
@@ -63,9 +78,12 @@ module Fias
       foreign_key: 'shortname',
       primary_key: 'scname'
 
-    # Есть ли исторические варианты записи?
     def has_history?
       previd.present?
+    end
+
+    def actual?
+      livestatus == 1
     end
 
     # Актуальный родитель. Для 1-го проезда 2-й Конной Лахты - только Питер.
@@ -80,47 +98,89 @@ module Fias
     # Название с сокращением / полным наименованием города
     # "г. Санкт-Петербург" / "город Санкт-Петербург"
     #
-    #   full ? "Город"" : г.
-    #   explicit == false ? "Дагестан" вместо "Республика Дагестан", но всегда
-    #                       "Самарская область"
-    def abbrevated(full = true, explicit = false)
+    # Для работы метода требуется загрузить таблицу :address_object_types
+    #
+    # Параметр - режим:
+    #   :obviously - очевидный режим". В этом режиме "Дагестан" вместо
+    #                "Республика Дагестан", "АО" вместо "Автономная область",
+    #                но всегда "Краснодарский край"
+    #   :short     - дописываются "г." и "респ."
+    #   :long      - дописываются "город" и "Республика"
+    #
+    # Пример:
+    #   .abbrevated(:obviously)      # Тульская область, Хакасия, Еврейская Аобл.
+    #   .abbrevated(:short)          # Тульская область, Респ. Хакасия,  Еврейская Аобл.
+    #   .abbrevated(:long)           # Тульская область, Республика Хакасия, Еврейская автономная область
+    def abbrevated(mode = :obviously)
+      return name if address_object_type.blank? || shortname.blank?
+
       case aolevel_sym
       when :region
         # "Ханты-Мансийский Автономный округ - Югра"
         return name if regioncode == '86'
 
-        no_shortname = shortname.blank? || (full && address_object_type.blank?)
-        return name if no_shortname
-
         ending = name[-2..-1]
 
-        # В конец ставить если кончается на -ая -ий или это Чувашия
-        explicit_append = SHN_MUST_APPEND_TO_ENDINGS.include?(ending) ||
-                          shortname == 'Чувашия'
+        # Если название кончается на -ая -ий - по правилам русского языка
+        # нужно дописать в конец "область", "край"
+        must_append = SHN_MUST_APPEND_TO_ENDINGS.include?(ending)
 
-        # Дописывать сокращение нужно если либо заставили - либо оно должно
-        # быть по правилам русского языка
-        must_abbrevate = explicit || explicit_append
+        must_abbrevate = must_append ||
+                         shortname == 'Чувашия' ||
+                         mode != :obviously
 
         return name unless must_abbrevate
 
-        abbr = full ? address_object_type.name : shortname
+        abbr = case mode
+          when :short
+            shortname
+          when :long
+            address_object_type.name
+          when :obviously
+            if SHN_LEAVE_SHORTS_INTACT.include?(shortname)
+              shortname
+            else
+              address_object_type.name
+            end
+        end
 
-        # Точка не ставится для АО, Аобл или если это "Автономная область"
-        abbr = "#{abbr}." unless shortname.in?(SHN_MUST_NOT_APPEND_DOT) || full
+        # Точка не ставится для АО, края, Чувашии и длинных названий
+        abbr = "#{abbr}." if mode == :short && not(shortname.in?(SHN_MUST_NOT_APPEND_DOT))
 
-        if shortname.in?(SHN_PREPEND_BY_DEFAULT) && not(explicit_append)
+        if not(must_append) && must_abbrevate
           "#{abbr} #{name}"
         else
-          # Сокращаются все длинные названия типов (Республика, Край),
-          # кроме Чувашии и все короткие, кроме АО, Аобл
-          if shortname != 'Чувашия'
-            abbr = abbr.mb_chars.downcase if full || not(shortname.in?(SHN_NODCASE))
-          end
+          # "Республика" => "республика", но "АО" остается
+          abbr = abbr.mb_chars.downcase if not(shortname.in?(SHN_LEAVE_SHORTS_INTACT))
           "#{name} #{abbr}"
         end
       else
-        "#{shortname}. #{name}"
+        abbr = if full
+          address_object_type.try(:name)
+        else
+          shortname
+        end
+        "#{abbr} #{name}"
+      end
+    end
+
+    # Выбирает лучшее совпадение из возвращенного matching
+    # Пример:
+    #
+    #
+    class << self
+      def match_existing(scope, reference_field, title_field, &block)
+        scope.find_each do |object|
+          reference = object[reference_field]
+          title = object[title_field]
+
+          matches = if reference.blank?
+            scoped.matching(title)
+          else
+            scoped.actual.where(aoguid: reference)
+          end
+          yield(object, matches)
+        end
       end
     end
 
@@ -135,7 +195,6 @@ module Fias
     # всегда должно быть "Самарская область", а "Дагестан" понятно и так.
     SHN_MUST_APPEND_TO_ENDINGS = %w(ая ий)
     SHN_MUST_NOT_APPEND_DOT = %w(край АО Чувашия) # Не дописывать точку к сокращению
-    SHN_NODCASE = %w(АО Аобл Чувашия) # Не даункезить короткое название даже если оно в конце
-    SHN_PREPEND_BY_DEFAULT = %w(Респ г) # Ставить в начало по-умолчанию
+    SHN_LEAVE_SHORTS_INTACT = %w(АО Аобл Чувашия) # В очевидном режиме не разворачивать "АО" в "Автономная область"
   end
 end
