@@ -1,0 +1,7 @@
+AllCops:
+  Include:
+    - ./Gemfile
+  Exclude:
+    - config/**/*
+Documentation:
+  Enabled: false
