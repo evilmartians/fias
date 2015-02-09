@@ -14,12 +14,10 @@ describe Fias::Import::Copy do
   before do
     stub_const('Fias::Import::Schema::UUID', name.to_sym => %w(name))
 
-    checkout = double('checkout')
-
-    allow(ActiveRecord::Base).to receive(:connection).and_return(connection)
-    allow(connection).to receive(:pool).and_return(pool)
-    allow(pool).to receive(:checkout).and_return(checkout)
-    allow(checkout).to receive(:raw_connection).and_return(raw_connection)
+    allow(described_class).to receive(:connection).and_return(connection)
+    allow(described_class).to(
+      receive(:raw_connection).and_return(raw_connection)
+    )
   end
 
   it '#encode' do
