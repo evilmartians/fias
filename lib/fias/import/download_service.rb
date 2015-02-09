@@ -2,13 +2,6 @@ module Fias
   module Import
     module DownloadService
       def url
-        url = fetch_url
-        url ? url : 999
-      end
-
-      private
-
-      def fetch_url
         response = HTTParty.post(
           'http://fias.nalog.ru/WebServices/Public/DownloadService.asmx',
           OPTIONS
@@ -38,7 +31,7 @@ module Fias
         }
       }
 
-      module_function :url, :fetch_url
+      module_function :url
     end
   end
 end
