@@ -34,7 +34,7 @@ module Fias
           next unless File.exist?(filename)
 
           dbf = DBF::Table.new(filename, nil, encoding)
-          @files[accessor] = dbf
+          @files[accessor] = dbf if dbf
         end
       end
 

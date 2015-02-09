@@ -10,27 +10,17 @@ module Fias
         ''.tap do |s|
           @files.each do |name, dbf|
             next if dbf.blank?
-            s << schema_for(table_name(name), dbf)
+            s << schema_for(name, dbf)
           end
         end
       end
 
-      def pg
-        alter = @files.map do |name, _|
-          columns = PG_UUID[name]
-          next if columns.blank?
-          pg_alter(name, columns)
-        end
-
-        alter.compact.flatten.join
-      end
-
       private
 
-      def schema_for(table_name, dbf)
+      def schema_for(name, dbf)
         ''.tap do |s|
-          s << %(create_table "#{table_name}" do |t|\n)
-          s << schema_columns(dbf)
+          s << %(create_table "#{table_name(name)}" do |t|\n)
+          s << schema_columns(name, dbf)
           s << "end\n"
         end
       end
@@ -39,29 +29,25 @@ module Fias
         "#{@prefix}_#{name}"
       end
 
-      def schema_columns(table)
+      def schema_columns(name, table)
         ''.tap do |s|
           table.columns.each do |column|
-            s << "  t.column #{column.schema_definition}"
+            s << "  t.column #{schema_column_for(name, column)}"
           end
         end
       end
 
-      def pg_alter(name, columns)
-        table_name = table_name(name)
-
-        columns.map do |column|
-          %(
-            ActiveRecord::Base.connection.execute(
-              "ALTER TABLE #{table_name}
-                ALTER COLUMN #{column}
-                TYPE UUID USING CAST (#{column} AS UUID);")\n
-          )
+      def schema_column_for(name, column)
+        alter = UUID[name]
+        if alter && alter.include?(column.name)
+          %("#{column.name.downcase}", :uuid\n)
+        else
+          column.schema_definition
         end
       end
 
-      PG_UUID = {
-        address_objects: %w(aoguid aoid previd nextid parentguid)
+      UUID = {
+        address_objects: %w(AOGUID AOID PREVID NEXTID PARENTGUID)
       }
     end
   end
