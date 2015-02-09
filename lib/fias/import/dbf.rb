@@ -2,12 +2,12 @@ module Fias
   module Import
     class Dbf
       def initialize(path, encoding = DEFAULT_ENCODING)
-        unless Dir.exist?(path)
-          fail ArgumentError, 'FIAS database path does not exists'
-        end
-
         @path = path
         @files = {}
+
+        unless Dir.exist?(@path)
+          fail ArgumentError, "FIAS database path #{@path} does not exists"
+        end
 
         open_files(encoding)
       end

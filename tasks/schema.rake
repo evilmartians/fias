@@ -1,7 +1,7 @@
 require 'fias/import'
 
 namespace :fias do
-  desc 'Create FIAS tables (PREFIX, PATH to dbfs, DATABASE_URL, and TABLES)'
+  desc 'Create FIAS tables (PREFIX, FIAS_PATH to dbfs, DATABASE_URL, and TABLES)'
   task :create_tables do
     within_connection do |files|
       schema = Fias::Import::Schema.new(files)
@@ -30,7 +30,7 @@ namespace :fias do
   def within_connection(&block)
     connect_db
 
-    fias_path = ENV['PATH'] || 'tmp/fias'
+    fias_path = ENV['FIAS_PATH'] || 'tmp/fias'
     files = Fias::Import::Dbf.new(fias_path).only(ENV['TABLES'] || [])
 
     yield(files)
