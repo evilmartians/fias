@@ -3,13 +3,7 @@ module Fias
     module DownloadService
       def url
         url = fetch_url
-
-        if url
-          puts url
-        else
-          puts 'An error occured during SOAP call'
-          return 999
-        end
+        url ? url : 999
       end
 
       private
@@ -27,19 +21,17 @@ module Fias
       end
 
       OPTIONS = {
-        body: %(
-<?xml version="1.0" encoding="utf-8"?>
+        body: %(<?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
->
+  xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
 <soap:Body>
 <GetLastDownloadFileInfo
   xmlns="http://fias.nalog.ru/WebServices/Public/DownloadService.asmx/" />
 </soap:Body>
 </soap:Envelope>
-        ),
+),
         headers: {
           'SOAPAction' => 'http://fias.nalog.ru/WebServices/Public/DownloadService.asmx/GetLastDownloadFileInfo',
           'Content-Type' => 'text/xml; encoding=utf-8'

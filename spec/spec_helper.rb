@@ -3,12 +3,15 @@ $LOAD_PATH << '.' unless $LOAD_PATH.include?('.')
 require 'rubygems'
 require 'bundler/setup'
 require 'simplecov'
+require 'webmock/rspec'
 
 SimpleCov.start do
   add_filter 'spec'
 end
 
 require 'fias/import'
+
+WebMock.disable_net_connect!
 
 RSpec.configure do |config|
   config.order = :random
