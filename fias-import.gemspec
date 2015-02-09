@@ -24,6 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'pg_data_encoder'
   spec.add_dependency 'httparty'
   spec.add_dependency 'pg'
+  spec.add_dependency 'ruby-progressbar'
 
   spec.add_development_dependency 'bundler', '~> 1.7'
   spec.add_development_dependency 'rake', '~> 10.0'
@@ -31,4 +32,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'simplecov'
   spec.add_development_dependency 'rubocop'
   spec.add_development_dependency 'webmock'
+  spec.add_development_dependency 'sqlite3'
 end

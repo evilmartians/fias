@@ -4,6 +4,7 @@ require 'rubygems'
 require 'bundler/setup'
 require 'simplecov'
 require 'webmock/rspec'
+require 'active_record'
 
 SimpleCov.start do
   add_filter 'spec'

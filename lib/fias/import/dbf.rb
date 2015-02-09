@@ -13,6 +13,8 @@ module Fias
       end
 
       def only(*names)
+        return @files if names.empty?
+
         names = names.map do |name|
           name = name.to_sym
           name == :houses ? HOUSE_TABLES.keys : name
