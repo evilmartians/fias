@@ -22,23 +22,33 @@ describe Fias::Import::Copy do
     allow(checkout).to receive(:raw_connection).and_return(raw_connection)
   end
 
-  it 'encodes successfully' do
-    subject.encode
-  end
+  it('#encode') { subject.encode }
 
-  it 'imports' do
-    result = double('result')
-    expect(result).to receive(:result_status)
-    expect(result).to receive(:res_status).and_return('PGRES_COMMAND_OK')
+  context '#import' do
+    let(:result) { double('result') }
 
-    expect(connection).to receive(:execute).with(/TRUNCATE/).once
-    expect(raw_connection).to receive(:exec).with(/COPY #{table_name}/).once
-    expect(raw_connection).to receive(:put_copy_data).with(/PGCOPY/)
-    expect(raw_connection).to receive(:put_copy_end).once
-    expect(raw_connection).to receive(:get_result).and_return(result).once
-    expect(raw_connection).to receive(:get_result).and_return(nil).once
+    before do
+      expect(connection).to receive(:execute).with(/TRUNCATE/).once
+      expect(raw_connection).to receive(:exec).with(/COPY #{table_name}/).once
+      expect(raw_connection).to receive(:put_copy_data).with(/PGCOPY/)
+      expect(raw_connection).to receive(:put_copy_end).once
+      expect(raw_connection).to receive(:get_result).and_return(result).once
+      expect(result).to receive(:result_status)
+    end
 
-    subject.encode
-    subject.perform
+    it 'succeeds' do
+      expect(result).to receive(:res_status).and_return('PGRES_COMMAND_OK')
+      expect(raw_connection).to receive(:get_result).and_return(nil).once
+
+      subject.encode
+      subject.perform
+    end
+
+    it 'fails' do
+      expect(result).to receive(:res_status).and_return('NO')
+
+      subject.encode
+      expect { subject.perform }.to raise_error
+    end
   end
 end
