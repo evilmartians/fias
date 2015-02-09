@@ -16,8 +16,10 @@ module Fias
       end
 
       def tables
-        t = @files.map { |name, dbf| [table_name(name), dbf] if dbf }
-        Hash[*t.compact.flatten]
+        @files.map do |name, dbf|
+          uuid = UUID[name] || []
+          Copy.new(table_name(name), dbf, uuid.zip([:uuid] * uuid.size))
+        end
       end
 
       private
