@@ -44,15 +44,17 @@ module Fias
 
       def schema_column_for(name, column)
         alter = UUID[name]
-        if alter && alter.include?(column.name)
-          %("#{column.name.downcase}", :uuid\n)
+        column_name = column.name.downcase
+
+        if alter && alter.include?(column_name)
+          %("#{column_name}", :uuid\n)
         else
           column.schema_definition
         end
       end
 
       UUID = {
-        address_objects: %w(AOGUID AOID PREVID NEXTID PARENTGUID)
+        address_objects: %w(aoguid aoid previd nextid parentguid)
       }
 
       DEFAULT_PREFIX = 'fias'

@@ -10,7 +10,7 @@ describe Fias::Import::Copy do
   let(:pool) { double('pool') }
 
   subject do
-    described_class.new(table.keys.first, table.values.first)
+    described_class.new(table.keys.first, table.values.first, name: :uuid)
   end
 
   before do
@@ -22,7 +22,15 @@ describe Fias::Import::Copy do
     allow(checkout).to receive(:raw_connection).and_return(raw_connection)
   end
 
-  it('#encode') { subject.encode }
+  it('#encode') do
+    stub_const('Fias::Import::Schema::UUID', table_name.to_sym => %w(name))
+
+    expect(PgDataEncoder::EncodeForCopy).to receive(:new).with(
+      column_types: { 1 => :uuid }
+    ).and_call_original
+
+    subject.encode
+  end
 
   context '#import' do
     let(:result) { double('result') }

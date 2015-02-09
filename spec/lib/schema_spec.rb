@@ -12,7 +12,7 @@ describe Fias::Import::Schema do
   end
 
   it 'uuids' do
-    stub_const("#{described_class.name}::UUID", house99: %w(AOGUID))
+    stub_const("#{described_class.name}::UUID", house99: %w(aoguid))
     expect(subject.schema).to include('t.column "aoguid", :uuid')
   end
 

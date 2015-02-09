@@ -1,11 +1,13 @@
 module Fias
   module Import
     class Copy
-      def initialize(table_name, dbf)
+      def initialize(table_name, dbf, types = [])
         @connection = ActiveRecord::Base.connection
         @table_name = table_name
         @dbf = dbf
-        @encoder = PgDataEncoder::EncodeForCopy.new
+        @encoder = PgDataEncoder::EncodeForCopy.new(
+          column_types: map_types(types)
+        )
       end
 
       def encode
@@ -24,8 +26,20 @@ module Fias
 
       private
 
+      def map_types(types)
+        types = types.map do |name, type|
+          index = columns.index(name.to_s)
+          [index, type] if index
+        end
+        Hash[*types.compact.flatten]
+      end
+
       def columns
-        @dbf.columns.map(&:name).map(&:downcase).map { |c| %("#{c}") }.join(',')
+        @columns ||= @dbf.columns.map(&:name).map(&:downcase)
+      end
+
+      def columns_s
+        columns.map { |c| %("#{c}") }.join(',')
       end
 
       def prepare
@@ -36,7 +50,7 @@ module Fias
 
       def start
         raw_connection.exec(
-          "COPY #{@table_name} (#{columns}) FROM STDIN BINARY\n"
+          "COPY #{@table_name} (#{columns_s}) FROM STDIN BINARY\n"
         )
       end
 
