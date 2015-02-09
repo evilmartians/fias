@@ -16,4 +16,4 @@ RSpec.configure do |config|
   config.filter_run :focus
 end
 
-$: << File.join(File.dirname(__FILE__), '..', 'lib')
+$LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')

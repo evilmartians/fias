@@ -1,7 +1,7 @@
 module Fias
   module Import
     class Schema
-      def initialize(files, prefix = DEFAULT_PREFIX)
+      def initialize(files, prefix = Fias::Import::DEFAULT_PREFIX)
         @files = files
         @prefix = prefix
       end
@@ -59,8 +59,6 @@ module Fias
           )
         end
       end
-
-      DEFAULT_PREFIX = 'fias'
 
       PG_UUID = {
         address_objects: %w(aoguid aoid previd nextid parentguid)
