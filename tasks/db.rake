@@ -12,17 +12,15 @@ namespace :fias do
   desc 'Import FIAS data (PREFIX, FIAS_PATH to dbfs, DATABASE_URL and TABLES)'
   task :import do
     within_connection do |schema|
-      schema.tables.each do |table_name, dbf|
-        puts "Encoding #{table_name}..."
+      schema.tables.each do |table|
+        puts "Encoding #{table.table_name}..."
         bar = ProgressBar.create(
-          total: dbf.record_count,
+          total: table.dbf.record_count,
           format: '%a |%B| [%E] (%c/%C) %p%%'
         )
 
-        copy = Fias::Import::Copy.new(table_name, dbf)
-
-        copy.encode { bar.increment }
-        copy.perform
+        table.encode { bar.increment }
+        table.perform
       end
     end
   end

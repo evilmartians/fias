@@ -5,6 +5,10 @@ describe Fias::Import::Schema do
 
   subject { described_class.new(files, '_fias') }
 
+  before do
+    allow(ActiveRecord::Base).to receive(:connection)
+  end
+
   it 'returns schema' do
     expect(subject.schema).to include('_fias_house99')
     expect(subject.schema).to include('_fias_structure_statuses')
@@ -17,8 +21,6 @@ describe Fias::Import::Schema do
   end
 
   it 'tables' do
-    expect(subject.tables.keys).to eq(%w(
-      _fias_actual_statuses _fias_structure_statuses _fias_house99
-    ))
+    expect(subject.tables.size).to eq(3)
   end
 end

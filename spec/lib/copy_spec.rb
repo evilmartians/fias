@@ -1,19 +1,19 @@
 require 'spec_helper'
 
 describe Fias::Import::Copy do
-  let(:files) { Fias::Import::Dbf.new('spec/fixtures').files }
+  let(:name) { 'actual_statuses' }
+  let(:files) { Fias::Import::Dbf.new('spec/fixtures').only(name) }
   let(:tables) { Fias::Import::Schema.new(files).tables }
-  let(:table_name) { 'fias_actual_statuses' }
-  let(:table) { tables.slice(table_name) }
+  let(:table_name) { "fias_#{name}" }
   let(:connection) { double('connection') }
   let(:raw_connection) { double('raw_connection') }
   let(:pool) { double('pool') }
 
-  subject do
-    described_class.new(table.keys.first, table.values.first, name: :uuid)
-  end
+  subject { tables.first }
 
   before do
+    stub_const('Fias::Import::Schema::UUID', name.to_sym => %w(name))
+
     checkout = double('checkout')
 
     allow(ActiveRecord::Base).to receive(:connection).and_return(connection)
@@ -22,9 +22,7 @@ describe Fias::Import::Copy do
     allow(checkout).to receive(:raw_connection).and_return(raw_connection)
   end
 
-  it('#encode') do
-    stub_const('Fias::Import::Schema::UUID', table_name.to_sym => %w(name))
-
+  it '#encode' do
     expect(PgDataEncoder::EncodeForCopy).to receive(:new).with(
       column_types: { 1 => :uuid }
     ).and_call_original

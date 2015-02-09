@@ -17,8 +17,7 @@ module Fias
 
       def tables
         @files.map do |name, dbf|
-          uuid = UUID[name] || []
-          Copy.new(table_name(name), dbf, uuid.zip([:uuid] * uuid.size))
+          Copy.new(table_name(name), dbf, uuid_column_types(name))
         end
       end
 
@@ -53,6 +52,11 @@ module Fias
         else
           column.schema_definition
         end
+      end
+
+      def uuid_column_types(name)
+        uuid = UUID[name] || []
+        Hash[*uuid.zip([:uuid] * uuid.size).flatten]
       end
 
       UUID = {

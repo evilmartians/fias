@@ -1,7 +1,9 @@
 module Fias
   module Import
     class Copy
-      def initialize(table_name, dbf, types = [])
+      attr_reader :dbf, :table_name
+
+      def initialize(table_name, dbf, types = {})
         @connection = ActiveRecord::Base.connection
         @table_name = table_name
         @dbf = dbf
@@ -12,7 +14,8 @@ module Fias
 
       def encode
         @dbf.each do |record|
-          @encoder.add(record.to_a)
+          line = record.to_a.map { |v| v == '' ? nil : v }
+          @encoder.add(line)
           yield if block_given?
         end
       end
