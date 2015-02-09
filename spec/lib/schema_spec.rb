@@ -10,4 +10,10 @@ describe Fias::Import::Schema do
     expect(subject.schema).to include('_fias_structure_statuses')
     expect(subject.schema).to include('_fias_actual_statuses')
   end
+
+  it 'alters pg' do
+    stub_const("#{described_class.name}::PG_UUID", house99: %w(aoguid))
+    expect(subject.pg).to include('ALTER TABLE _fias_house99')
+    expect(subject.pg).to include('ALTER COLUMN aoguid')
+  end
 end

@@ -15,6 +15,18 @@ module Fias
         end
       end
 
+      def pg
+        alter = @files.map do |name, _|
+          columns = PG_UUID[name]
+          next if columns.blank?
+          pg_alter(name, columns)
+        end
+
+        alter.compact.flatten.join
+      end
+
+      private
+
       def schema_for(table_name, dbf)
         ''.tap do |s|
           s << %(create_table "#{table_name}" do |t|\n)
@@ -22,8 +34,6 @@ module Fias
           s << "end\n"
         end
       end
-
-      private
 
       def table_name(name)
         "#{@prefix}_#{name}"
@@ -37,7 +47,24 @@ module Fias
         end
       end
 
+      def pg_alter(name, columns)
+        table_name = table_name(name)
+
+        columns.map do |column|
+          %(
+            ActiveRecord::Base.connection.execute(
+              "ALTER TABLE #{table_name}
+                ALTER COLUMN #{column}
+                TYPE UUID USING CAST (#{column} AS UUID);")\n
+          )
+        end
+      end
+
       DEFAULT_PREFIX = 'fias'
+
+      PG_UUID = {
+        address_objects: %w(aoguid aoid previd nextid parentguid)
+      }
     end
   end
 end
