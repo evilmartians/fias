@@ -15,4 +15,10 @@ describe Fias::Import::Schema do
     stub_const("#{described_class.name}::UUID", house99: %w(AOGUID))
     expect(subject.schema).to include('t.column "aoguid", :uuid')
   end
+
+  it 'tables' do
+    expect(subject.tables.keys).to eq(%w(
+      _fias_actual_statuses _fias_structure_statuses _fias_house99
+    ))
+  end
 end

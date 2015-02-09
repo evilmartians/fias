@@ -1,7 +1,7 @@
 module Fias
   module Import
     class Schema
-      def initialize(files, prefix = Fias::Import::DEFAULT_PREFIX)
+      def initialize(files, prefix = DEFAULT_PREFIX)
         @files = files
         @prefix = prefix
       end
@@ -13,6 +13,11 @@ module Fias
             s << schema_for(name, dbf)
           end
         end
+      end
+
+      def tables
+        t = @files.map { |name, dbf| [table_name(name), dbf] if dbf }
+        Hash[*t.compact.flatten]
       end
 
       private
@@ -49,6 +54,8 @@ module Fias
       UUID = {
         address_objects: %w(AOGUID AOID PREVID NEXTID PARENTGUID)
       }
+
+      DEFAULT_PREFIX = 'fias'
     end
   end
 end
