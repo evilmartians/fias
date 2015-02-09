@@ -1,16 +1,16 @@
 module Fias
   module Import
     class Schema
-      def initialize(files, tables)
+      def initialize(files, prefix = DEFAULT_PREFIX)
         @files = files
-        @tables = tables
+        @prefix = prefix
       end
 
       def schema
         ''.tap do |s|
-          @tables.each do |name, dbf|
+          @files.each do |name, dbf|
             next if dbf.blank?
-            s << schema_for(name, table_name(name), dbf)
+            s << schema_for(table_name(name), dbf)
           end
         end
       end
@@ -36,6 +36,8 @@ module Fias
           end
         end
       end
+
+      DEFAULT_PREFIX = 'fias'
     end
   end
 end
