@@ -1,8 +1,31 @@
-# Fias
+# FIAS
+
+[![Build Status](https://travis-ci.org/evilmartians/fias.svg)](http://travis-ci.org/evilmartians/fias)
+[![Code Climate](https://codeclimate.com/github/evilmartians/fias/badges/gpa.svg)](https://codeclimate.com/github/evilmartians/fias)
 
 Ruby wrapper for the Russian [ФИАС](http://fias.nalog.ru) database.
 
-Works best with Ruby on Rails and PostgreSQL backend.
+Designed for use with Ruby on Rails and a PostgreSQL backend.
+
+<a href="https://evilmartians.com/?utm_source=fias-gem">
+<img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg" alt="Sponsored by Evil Martians" width="236" height="54">
+</a>
+
+## Installation
+
+Add this line to your application's Gemfile:
+
+```ruby
+gem 'fias'
+```
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself:
+
+    $ gem install fias
 
 ## Import into SQL
 
@@ -21,21 +44,12 @@ The rake task accepts options through ENV vars:
 
 Gem uses `COPY FROM STDIN BINARY` to import data. Works with PostgreSQL only.
 
-## Installation
+## Contributors
 
-Add this line to your application's Gemfile:
+* Victor Sokolov (@gzigzigzeo)
+* Vlad Bokov (@razum2um)
 
-```ruby
-gem 'fias'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself:
-
-    $ gem install fias
+Special thanks to @gazay, @kirs
 
 ## Contributing
 
@@ -44,3 +58,8 @@ Or install it yourself:
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
+
+## License
+
+The MIT License
