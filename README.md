@@ -2,7 +2,7 @@
 
 Ruby wrapper for [ФИАС](http://fias.nalog.ru) database.
 
-## Import
+## Import into SQL
 
     $ mkdir tmp/fias && cd tmp/fias
     $ bundle exec rake fias:download | xargs wget
@@ -33,7 +33,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install fias-import
+    $ gem install fias
 
 ## Contributing
 
