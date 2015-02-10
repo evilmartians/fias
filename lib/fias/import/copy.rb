@@ -45,11 +45,8 @@ module Fias
       end
 
       def prepare
-        @connection = ActiveRecord::Base.connection
-        @connection2 = ActiveRecord::Base.connection.pool.checkout
-        @raw_connection = @connection2.raw_connection
-
-        @connection.execute(
+        @raw_connection = ActiveRecord::Base.connection.raw_connection
+        @raw_connection.exec(
           "TRUNCATE TABLE #{@table_name}; SET client_min_messages TO warning;"
         )
       end
@@ -79,9 +76,6 @@ module Fias
             fail "Import failure: #{result_status}"
           end
         end
-
-        @connection.pool.checkin(@connection2)
-        @connection.pool.checkin(@connection)
       end
 
       BLOCK_SIZE = 10_240
