@@ -5,27 +5,32 @@ describe Fias::Import::Copy do
   let(:files) { Fias::Import::Dbf.new('spec/fixtures').only(name) }
   let(:tables) { Fias::Import::Schema.new(files).tables }
   let(:table_name) { "fias_#{name}" }
+  let(:checkout) { double('checkout') }
+  let(:pool) { double('pool') }
   let(:connection) { double('connection') }
   let(:raw_connection) { double('raw_connection') }
-  let(:pool) { double('pool') }
 
   subject { tables.first }
 
   before do
     stub_const('Fias::Import::Schema::UUID', name.to_sym => %w(name))
 
-    allow(described_class).to receive(:connection).and_return(connection)
-    allow(described_class).to(
-      receive(:raw_connection).and_return(raw_connection)
-    )
+    allow(ActiveRecord::Base).to receive(:connection).and_return(connection)
+    allow(connection).to receive(:pool).and_return(pool)
+    allow(pool).to receive(:checkout).and_return(checkout)
+    allow(checkout).to receive(:raw_connection).and_return(raw_connection)
+
+    allow(pool).to receive(:checkin)
   end
 
-  it '#encode' do
-    expect(PgDataEncoder::EncodeForCopy).to receive(:new).with(
-      column_types: { 1 => :uuid }
-    ).and_call_original
+  context '#encode' do
+    it do
+      expect(PgDataEncoder::EncodeForCopy).to receive(:new).with(
+        column_types: { 1 => :uuid }
+      ).and_call_original
 
-    subject.encode
+      subject.encode
+    end
   end
 
   context '#import' do
