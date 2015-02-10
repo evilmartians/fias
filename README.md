@@ -1,8 +1,8 @@
-# Fias::Import
+# Fias
 
-Import [ФИАС](http://fias.nalog.ru) database from .DBF into PostgreSQL database.
+Work with [ФИАС](http://fias.nalog.ru) database from .DBF into PostgreSQL database.
 
-## Usage
+## Import
 
     $ mkdir tmp/fias && cd tmp/fias
     $ bundle exec rake fias:download | xargs wget
