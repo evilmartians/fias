@@ -49,7 +49,7 @@ namespace :fias do
     schema = Fias::Import::Schema.new(files)
 
     diff = tables - files.keys.map(&:to_s)
-    puts "WARNING: Missing DBF files for: #{diff.join(', ')}"
+    puts "WARNING: Missing DBF files for: #{diff.join(', ')}" if diff.any?
 
     yield(schema)
   end

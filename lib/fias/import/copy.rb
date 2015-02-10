@@ -4,6 +4,7 @@ module Fias
       attr_reader :dbf, :table_name
 
       def initialize(table_name, dbf, types = {})
+        @raw_connection = ActiveRecord::Base.connection.raw_connection
         @table_name = table_name
         @dbf = dbf
         @encoder = PgDataEncoder::EncodeForCopy.new(
@@ -45,7 +46,6 @@ module Fias
       end
 
       def prepare
-        @raw_connection = ActiveRecord::Base.connection.raw_connection
         @raw_connection.exec(
           "TRUNCATE TABLE #{@table_name}; SET client_min_messages TO warning;"
         )

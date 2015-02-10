@@ -6,7 +6,10 @@ describe Fias::Import::Schema do
   subject { described_class.new(files, '_fias') }
 
   before do
-    allow(ActiveRecord::Base).to receive(:connection)
+    connection = double('connection')
+
+    allow(ActiveRecord::Base).to receive(:connection).and_return(connection)
+    allow(connection).to receive(:raw_connection)
   end
 
   it 'returns schema' do
