@@ -44,10 +44,12 @@ namespace :fias do
     connect_db
 
     fias_path = ENV['FIAS_PATH'] || 'tmp/fias'
-    files = Fias::Import::Dbf.new(fias_path).only(
-      *ENV['TABLES'].to_s.split(',')
-    )
+    tables = *ENV['TABLES'].to_s.split(',')
+    files = Fias::Import::Dbf.new(fias_path).only(*tables)
     schema = Fias::Import::Schema.new(files)
+
+    diff = tables - files.keys.map(&:to_s)
+    puts "WARNING: Missing DBF files for: #{diff.join(', ')}"
 
     yield(schema)
   end
