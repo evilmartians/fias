@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'fias/import/version'
+require 'fias/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'fias'
-  spec.version       = Fias::Import::VERSION
+  spec.version       = Fias::VERSION
   spec.authors       = ['Victor Sokolov']
   spec.email         = ['gzigzigzeo@evilmartians.com']
   spec.summary       = %q{Imports Russian FIAS database into SQL}

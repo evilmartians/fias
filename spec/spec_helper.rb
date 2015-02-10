@@ -10,7 +10,7 @@ SimpleCov.start do
   add_filter 'spec'
 end
 
-require 'fias/import'
+require 'fias'
 
 WebMock.disable_net_connect!
 
