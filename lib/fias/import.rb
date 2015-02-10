@@ -8,6 +8,7 @@ require 'fias/import/dbf'
 require 'fias/import/schema'
 require 'fias/import/download_service'
 require 'fias/import/copy'
+require 'fias/import/railtie' if defined?(Rails)
 
 module Fias
   module Import
