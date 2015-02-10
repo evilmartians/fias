@@ -1,6 +1,6 @@
 # Fias::Import
 
-TODO: Write a gem description
+Import [ФИАС](http://fias.nalog.ru) database from .dbf into PostgreSQL.
 
 ## Installation
 
