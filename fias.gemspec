@@ -4,13 +4,13 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'fias/import/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'fias-import'
+  spec.name          = 'fias'
   spec.version       = Fias::Import::VERSION
   spec.authors       = ['Victor Sokolov']
   spec.email         = ['gzigzigzeo@evilmartians.com']
   spec.summary       = %q{Imports FIAS database into SQL}
   spec.description   = %q{Imports FIAS database into SQL}
-  spec.homepage      = 'http://github.com/gzigzigzeo/fias-import'
+  spec.homepage      = 'http://github.com/evilmartians/fias'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0")
