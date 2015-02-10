@@ -24,7 +24,7 @@ Gem uses COPY FROM STDIN BINARY to import data. Works for PostgreSQL only.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'fias-import'
+gem 'fias'
 ```
 
 And then execute:
@@ -37,7 +37,7 @@ Or install it yourself as:
 
 ## Contributing
 
-1. Fork it ( https://github.com/gzigzigzeo/fias-import/fork )
+1. Fork it ( https://github.com/evilmartians/fias/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
