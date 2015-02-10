@@ -1,6 +1,6 @@
 # Fias
 
-Work with [ФИАС](http://fias.nalog.ru) database from .DBF into PostgreSQL database.
+Ruby wrapper for [ФИАС](http://fias.nalog.ru) database.
 
 ## Import
 
@@ -17,7 +17,7 @@ Rake task accepts options through env vars:
 * `PREFIX` for a database tables prefix ('fias_' by default).
 * `PATH` to specify DBF files location ('tmp/fias' by default).
 
-Gem uses COPY FROM STDIN BINARY to import data.
+Gem uses COPY FROM STDIN BINARY to import data. Works for PostgreSQL only.
 
 ## Installation
 
