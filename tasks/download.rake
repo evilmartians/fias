@@ -1,4 +1,4 @@
-require 'fias/import'
+require 'fias'
 
 namespace :fias do
   desc 'Returns lastest url of FIAS db (bundle exec rake fias:download | xargs wget)'

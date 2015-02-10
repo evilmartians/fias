@@ -1,4 +1,4 @@
-require 'fias/import'
+require 'fias'
 require 'ruby-progressbar'
 
 namespace :fias do
