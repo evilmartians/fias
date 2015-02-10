@@ -1,6 +1,8 @@
 # Fias
 
-Ruby wrapper for [ФИАС](http://fias.nalog.ru) database.
+Ruby wrapper for the Russian [ФИАС](http://fias.nalog.ru) database.
+
+Works best with Ruby on Rails and PostgreSQL backend.
 
 ## Import into SQL
 
@@ -11,13 +13,13 @@ Ruby wrapper for [ФИАС](http://fias.nalog.ru) database.
 
 ## Notes
 
-Rake task accepts options through env vars:
+The rake task accepts options through ENV vars:
 
-* `TABLES` to specify comma-separated list of a tables to import/create. See `Fias::Import::Dbf::TABLES` for a key names. Use `houses` as an alias for HOUSE* tables. In most cases you need only `address_objects` table.
-* `PREFIX` for a database tables prefix ('fias_' by default).
+* `TABLES` to specify a comma-separated list of a tables to import/create. See `Fias::Import::Dbf::TABLES` for the list of key names. Use `houses` as an alias for HOUSE* tables. In most cases you'll need `address_objects` table only.
+* `PREFIX` for the database tables prefix ('fias_' by default).
 * `PATH` to specify DBF files location ('tmp/fias' by default).
 
-Gem uses COPY FROM STDIN BINARY to import data. Works for PostgreSQL only.
+Gem uses `COPY FROM STDIN BINARY` to import data. Works with PostgreSQL only.
 
 ## Installation
 
@@ -31,7 +33,7 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
+Or install it yourself:
 
     $ gem install fias
 
