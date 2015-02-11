@@ -10,7 +10,7 @@ describe Fias::Import::Tables do
     stub_const('Fias::Import::Tables::UUID', actual_statuses: %w(name))
 
     expect(db).to receive(:create_table).with(:_fias_actual_statuses).and_yield
-    expect(db).to receive(:create_table).with(:_fias_house99)
+    expect(db).to receive(:create_table).with(:_fias_nordoc99)
     expect(db).to receive(:create_table).with(:_fias_structure_statuses)
 
     expect(subject).to receive(:primary_key).with(:id)

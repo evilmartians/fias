@@ -1,11 +1,7 @@
 require 'spec_helper'
 
 describe Fias::Import::Dbf do
-  let(:path) do
-    File.join(File.dirname(__FILE__), '..', '..', 'spec', 'fixtures')
-  end
-
-  subject { described_class.new(path) }
+  subject { described_class.new('spec/fixtures') }
 
   context '#initialize' do
     it 'fails without files' do
@@ -14,7 +10,7 @@ describe Fias::Import::Dbf do
 
     it 'returns correct file list' do
       expect(subject.files.keys).to eq(
-        [:actual_statuses, :structure_statuses, :house99]
+        [:actual_statuses, :structure_statuses, :nordoc99]
       )
       expect(subject.files.values).to all(be_present)
       expect(subject.files.values).to all(be_kind_of(DBF::Table))
@@ -23,7 +19,7 @@ describe Fias::Import::Dbf do
 
   context '#only' do
     it 'returns only houses' do
-      expect(subject.only(:houses).keys).to eq([:house99])
+      expect(subject.only(:nordocs).keys).to eq([:nordoc99])
       expect(subject.only(:address_objects, :structure_statuses).keys).to eq(
         [:structure_statuses]
       )

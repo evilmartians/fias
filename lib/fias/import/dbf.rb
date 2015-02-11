@@ -18,6 +18,7 @@ module Fias
         names = names.map do |name|
           name = name.to_sym
           name == :houses ? HOUSE_TABLES.keys : name
+          name == :nordocs ? NORDOC_TABLES.keys : name
         end
 
         names.flatten!
@@ -40,9 +41,12 @@ module Fias
         end
       end
 
-      def self.house_tables
+      def self.n_tables(title)
         tables = (1..99).map do |n|
-          [format('house%0.2d', n).to_sym, format('HOUSE%0.2d.dbf', n)]
+          [
+            format('%s%0.2d', title, n).to_sym,
+            format('%s%0.2d.dbf', title.upcase, n)
+          ]
         end
 
         tables.flatten!
@@ -50,7 +54,8 @@ module Fias
         Hash[*tables]
       end
 
-      HOUSE_TABLES = house_tables
+      HOUSE_TABLES = n_tables('house')
+      NORDOC_TABLES = n_tables('nordoc')
 
       TABLES = {
         address_object_types: 'SOCRBASE.DBF',
@@ -66,6 +71,8 @@ module Fias
         landmarks: 'LANDMARK.DBF'
       }.merge(
         HOUSE_TABLES
+      ).merge(
+        NORDOC_TABLES
       )
 
       DEFAULT_ENCODING = Encoding::CP866

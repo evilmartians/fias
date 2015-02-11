@@ -34,7 +34,10 @@ namespace :fias do
     db = Sequel.connect(ENV['DATABASE_URL'])
     puts Benchmark.measure {
       db = Fias::Import::TreeBuilder.new(
-        db, table: :fias_address_objects, key: :aoguid, parent_key: :parentguid
+        db,
+        table: :fias_address_objects,
+        key: :aoguid,
+        parent_key: :parentguid
       )
 
       puts db.build_parent_id_by_key.size
