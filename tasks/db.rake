@@ -40,7 +40,7 @@ namespace :fias do
         parent_key: :parentguid
       )
 
-      puts db.build_parent_id_by_key.first.inspect
+      puts db.rebuild_parent_id.first.inspect
     }
   end
 

@@ -7,12 +7,12 @@ module Fias
         @table = options.fetch(:table).to_sym
         @key = options.fetch(:key)
         @parent_key = options.fetch(:parent_key)
-        @id = options.fetch(:id, :id)
         @where = options.fetch(:where, {})
-        @parent_id = options.fetch(:parent_id, :parent_id)
+        @id = options.fetch(:id, :id)
+#        @parent_id = options.fetch(:parent_id, :parent_id)
       end
 
-      def build_parent_id_by_key
+      def rebuild_parent_id
         @parent_id_by_key ||= parent_id_by_key
       end
 
