@@ -29,7 +29,7 @@ Or install it yourself:
 
 ## Import into SQL
 
-    $ mkdir tmp/fias && cd tmp/fias
+    $ mkdir -p tmp/fias && cd tmp/fias
     $ bundle exec rake fias:download | xargs wget
     $ unrar e fias_dbf.rar
     $ bundle exec rake fias:create_tables fias:import DATABASE_URL=postgres://localhost/fias

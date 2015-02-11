@@ -1,5 +1,7 @@
 require 'active_support/core_ext/object/blank'
 require 'active_support/core_ext/hash/slice'
+require 'active_support/hash_with_indifferent_access'
+require 'active_support/core_ext/enumerable'
 require 'dbf'
 require 'httparty'
 require 'pg_data_encoder'

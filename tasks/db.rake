@@ -30,34 +30,14 @@ namespace :fias do
   desc 'Build active elements tree'
   task :build do
     require 'benchmark'
-    require 'active_support/core_ext/enumerable'
 
     db = Sequel.connect(ENV['DATABASE_URL'])
     puts Benchmark.measure {
-      raw =
-        db[:fias_address_objects]
-          .where(livestatus: 1)
-          .select_map([:id, :aoguid, :parentguid])
-
-      by_aoguid = raw.index_by { |r| r[1] }
-
-      bar = ProgressBar.create(
-        total: raw.size,
-        format: '%a |%B| [%E] (%c/%C) %p%%'
+      db = Fias::Import::TreeBuilder.new(
+        db, table: :fias_address_objects, key: :aoguid, parent_key: :parentguid
       )
 
-      tree = raw.map do |row|
-        bar.increment
-
-        if row[2]
-          parent_id = by_aoguid[row[2]]
-          parent_id = parent_id[0] if parent_id
-        end
-
-        [row[0], parent_id]
-      end
-
-      by_parent_id = tree.group_by { |row| row[1] }
+      puts db.build_parent_id_by_key.size
     }
   end
 
