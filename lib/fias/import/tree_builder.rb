@@ -16,8 +16,6 @@ module Fias
         @parent_id_by_key ||= parent_id_by_key
       end
 
-      def
-
       private
 
       def data
