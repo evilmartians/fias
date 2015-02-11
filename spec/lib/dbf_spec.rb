@@ -1,7 +1,11 @@
 require 'spec_helper'
 
 describe Fias::Import::Dbf do
-  subject { described_class.new('spec/fixtures') }
+  let(:path) do
+    File.join(File.dirname(__FILE__), '..', '..', 'spec', 'fixtures')
+  end
+
+  subject { described_class.new(path) }
 
   context '#initialize' do
     it 'fails without files' do
