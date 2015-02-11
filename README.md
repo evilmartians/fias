@@ -34,8 +34,6 @@ Or install it yourself:
     $ unrar e fias_dbf.rar
     $ bundle exec rake fias:create_tables fias:import DATABASE_URL=postgres://localhost/fias
 
-## Notes
-
 The rake task accepts options through ENV vars:
 
 * `TABLES` to specify a comma-separated list of a tables to import/create. See `Fias::Import::Dbf::TABLES` for the list of key names. Use `houses` as an alias for HOUSE* tables. In most cases you'll need `address_objects` table only.
@@ -44,6 +42,22 @@ The rake task accepts options through ENV vars:
 * `DATABASE_URL` to set database credentials (needed explicitly even project is on Rails).
 
 Gem uses `COPY FROM STDIN BINARY` to import data. Works with PostgreSQL only.
+
+## Notes about FIAS
+
+1. FIAS address objects table contains a lot of fields which are not useful in most cases (tax office id, legal document id etc).
+2. Address objects table contains lot of historical records (more than 50% in fact) which are not useful in most cases.
+3. Every record in address object table could have multiple parents. For example, Nevsky prospekt in Saint Petersburg has two parents: Saint Petersburg (active) and Leningrad (historical name of the city, inactive). Most hierarchy libraries accepts just one parent for a record.
+4. Using UUID type field as a primary key is not a good idea if you want to use ancestry or closure_tree gems to navigate through record tree.
+5. Typical SQL production server settings are optimised for reading, so import on production could take dramatically long time.
+
+## Notes on workflow
+
+1. Use raw FIAS tables just as a temporary data source for creating/updating primary address objects table in your app.
+2. The only requirement is to keep AOGUID and AOID fields in your table.
+3. Import will take dramatically long time on typical production SQL server because most of production servers are optimized for reading. In other hand, address object table is immutable in most cases. It's okay to work with addressing data on your local machine and transfer result to production as SQL dumps.
+
+## Keeping up to date
 
 ## Contributors
 
