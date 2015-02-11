@@ -27,23 +27,6 @@ namespace :fias do
     end
   end
 
-  desc 'Build active elements tree'
-  task :build do
-    require 'benchmark'
-
-    db = Sequel.connect(ENV['DATABASE_URL'])
-    puts Benchmark.measure {
-      db = Fias::Import::TreeBuilder.new(
-        db,
-        table: :address_objects,
-        key: :aoguid,
-        parent_key: :parentguid
-      )
-
-      puts db.rebuild_parent_id.first.inspect
-    }
-  end
-
   private
 
   def connect_db

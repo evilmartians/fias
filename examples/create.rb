@@ -82,7 +82,7 @@ end
 def apply_hierarchy
   parent_map = Fias::Import::TreeBuilder.new(
     DB, table: ADDRESS_OBJECTS_TABLE_NAME, key: :aoguid, parent_key: :parentguid
-  ).rebuild_parent_id
+  ).parent_map
 
   bar = create_bar(parent_map.size)
 

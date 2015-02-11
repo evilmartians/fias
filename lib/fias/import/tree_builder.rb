@@ -9,12 +9,14 @@ module Fias
         @parent_key = options.fetch(:parent_key)
         @where = options.fetch(:where, {})
         @id = options.fetch(:id, :id)
-#        @parent_id = options.fetch(:parent_id, :parent_id)
+        #        @parent_id = options.fetch(:parent_id, :parent_id)
       end
 
-      def rebuild_parent_id
+      def parent_map
         @parent_id_by_key ||= parent_id_by_key
       end
+
+      def
 
       private
 
