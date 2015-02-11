@@ -35,12 +35,12 @@ namespace :fias do
     puts Benchmark.measure {
       db = Fias::Import::TreeBuilder.new(
         db,
-        table: :fias_address_objects,
+        table: :address_objects,
         key: :aoguid,
         parent_key: :parentguid
       )
 
-      puts db.build_parent_id_by_key.size
+      puts db.build_parent_id_by_key.first.inspect
     }
   end
 

@@ -5,6 +5,8 @@ module Fias
         @path = path
         @files = {}
 
+        puts Dir["#{@path}/*"].entries.inspect
+
         unless Dir.exist?(@path)
           fail ArgumentError, "FIAS database path #{@path} does not exists"
         end

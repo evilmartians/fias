@@ -5,10 +5,10 @@ module Fias
         @db = db
         @options = options
         @table = options.fetch(:table).to_sym
-        @where = options.fetch(:where, {})
         @key = options.fetch(:key)
         @parent_key = options.fetch(:parent_key)
         @id = options.fetch(:id, :id)
+        @where = options.fetch(:where, {})
         @parent_id = options.fetch(:parent_id, :parent_id)
       end
 
@@ -41,9 +41,12 @@ module Fias
       end
 
       def parent_id_by_key
-        rows = id_parent_id.group_by { |row| row[1] }
-        rows.map! { |parent_id, tuples| [parent_id, tuples.map(&:first)] }
-        Hash[*rows.flatten]
+        {}.tap do |rows|
+          id_parent_id.each do |(id, parent_id)|
+            rows[parent_id] ||= []
+            rows[parent_id] << id
+          end
+        end
       end
     end
   end
