@@ -16,7 +16,7 @@ end
 
 require 'fias'
 
-WebMock.disable_net_connect!
+WebMock.disable_net_connect!(allow: %w(codeclimate.com))
 
 RSpec.configure do |config|
   config.order = :random
