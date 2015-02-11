@@ -32,7 +32,8 @@ module Fias
       def open_files(encoding)
         TABLES.each do |accessor, dbf_filename|
           filename = File.join(@path, dbf_filename)
-
+puts filename
+puts File.exist?(filename)
           next unless File.exist?(filename)
 
           dbf = DBF::Table.new(filename, nil, encoding)
