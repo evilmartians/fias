@@ -3,19 +3,14 @@ require 'spec_helper'
 describe Fias::Import::Copy do
   let(:name) { 'actual_statuses' }
   let(:files) { Fias::Import::Dbf.new('spec/fixtures').only(name) }
-  let(:tables) { Fias::Import::Schema.new(files).tables }
-  let(:table_name) { "fias_#{name}" }
+  let(:table_name) { "fias_#{name}".to_sym }
+  let(:db) { double('db') }
   let(:raw_connection) { double('raw_connection') }
 
-  subject { tables.first }
+  subject { Fias::Import::Tables.new(db, files).copy.first }
 
   before do
-    stub_const('Fias::Import::Schema::UUID', name.to_sym => %w(name))
-
-    connection = double('connection')
-
-    allow(ActiveRecord::Base).to receive(:connection).and_return(connection)
-    allow(connection).to receive(:raw_connection).and_return(raw_connection)
+    stub_const('Fias::Import::Tables::UUID', name.to_sym => %w(name))
   end
 
   context '#encode' do
@@ -28,31 +23,22 @@ describe Fias::Import::Copy do
     end
   end
 
-  context '#import' do
+  context '#copy' do
     let(:result) { double('result') }
 
     before do
-      expect(raw_connection).to receive(:exec).with(/TRUNCATE/).once
-      expect(raw_connection).to receive(:exec).with(/COPY #{table_name}/).once
-      expect(raw_connection).to receive(:put_copy_data).with(/PGCOPY/)
-      expect(raw_connection).to receive(:put_copy_end).once
-      expect(raw_connection).to receive(:get_result).and_return(result).once
-      expect(result).to receive(:result_status)
+      table_obj = double(table_name)
+      expect(db).to receive(:[]).with(table_name).and_return(table_obj)
+      expect(table_obj).to receive(:truncate)
+      expect(db).to receive(:run).with(/SET client/)
+      expect(db).to receive(:copy_into).with(
+        :fias_actual_statuses, columns: [:actstatid, :name], format: :binary
+      ).and_yield.and_yield
     end
 
-    it 'succeeds' do
-      expect(result).to receive(:res_status).and_return('PGRES_COMMAND_OK')
-      expect(raw_connection).to receive(:get_result).and_return(nil).once
-
+    it do
       subject.encode
-      subject.perform
-    end
-
-    it 'fails' do
-      expect(result).to receive(:res_status).and_return('NO')
-
-      subject.encode
-      expect { subject.perform }.to raise_error
+      subject.copy
     end
   end
 end

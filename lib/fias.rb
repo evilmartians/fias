@@ -5,7 +5,7 @@ require 'httparty'
 require 'pg_data_encoder'
 require 'fias/version'
 require 'fias/import/dbf'
-require 'fias/import/schema'
+require 'fias/import/tables'
 require 'fias/import/download_service'
 require 'fias/import/copy'
 require 'fias/railtie' if defined?(Rails)

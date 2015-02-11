@@ -1,18 +1,20 @@
 require 'fias'
 require 'ruby-progressbar'
+require 'sequel'
 
 namespace :fias do
   desc 'Create FIAS tables (PREFIX, FIAS_PATH to dbfs, DATABASE_URL and TABLES)'
   task :create_tables do
-    within_connection do |schema|
-      ActiveRecord::Schema.define { eval(schema.schema) }
+    within_connection do |tables|
+      tables.create
+      puts "#{tables.files.keys.join(', ')} created."
     end
   end
 
   desc 'Import FIAS data (PREFIX, FIAS_PATH to dbfs, DATABASE_URL and TABLES)'
   task :import do
-    within_connection do |schema|
-      schema.tables.each do |table|
+    within_connection do |tables|
+      tables.copy.each do |table|
         puts "Encoding #{table.table_name}..."
         bar = ProgressBar.create(
           total: table.dbf.record_count,
@@ -20,7 +22,7 @@ namespace :fias do
         )
 
         table.encode { bar.increment }
-        table.perform
+        table.copy
       end
     end
   end
@@ -28,29 +30,23 @@ namespace :fias do
   private
 
   def connect_db
-    require 'active_record'
-
-    begin
-      ActiveRecord::Base.connection
-    rescue ActiveRecord::ConnectionNotEstablished
-      if ENV['DATABASE_URL'].blank?
-        fail ArgumentError, 'Specify database in DATABASE_URL env variable or call rake environment [task]'
-      end
-      ActiveRecord::Base.establish_connection
-    end
+    Sequel.connect(ENV['DATABASE_URL'])
   end
 
   def within_connection(&block)
-    connect_db
+    if ENV['DATABASE_URL'].blank?
+      fail 'Specify DATABASE_URL (eg. postgres://localhost/fias)'
+    end
 
+    db = Sequel.connect(ENV['DATABASE_URL'])
     fias_path = ENV['FIAS_PATH'] || 'tmp/fias'
-    tables = *ENV['TABLES'].to_s.split(',')
-    files = Fias::Import::Dbf.new(fias_path).only(*tables)
-    schema = Fias::Import::Schema.new(files)
+    only = *ENV['TABLES'].to_s.split(',')
+    files = Fias::Import::Dbf.new(fias_path).only(*only)
+    tables = Fias::Import::Tables.new(db, files)
 
-    diff = tables - files.keys.map(&:to_s)
+    diff = only - files.keys.map(&:to_s)
     puts "WARNING: Missing DBF files for: #{diff.join(', ')}" if diff.any?
 
-    yield(schema)
+    yield(tables)
   end
 end

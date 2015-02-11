@@ -3,9 +3,9 @@ module Fias
     class Copy
       attr_reader :dbf, :table_name
 
-      def initialize(table_name, dbf, types = {})
-        @raw_connection = ActiveRecord::Base.connection.raw_connection
-        @table_name = table_name
+      def initialize(db, table_name, dbf, types = {})
+        @db = db
+        @table_name = table_name.to_sym
         @dbf = dbf
         @encoder = PgDataEncoder::EncodeForCopy.new(
           column_types: map_types(types)
@@ -20,65 +20,43 @@ module Fias
         end
       end
 
-      def perform
+      def copy
         prepare
-        start
-        copy
-        finish
+        copy_into
       end
 
       private
 
       def map_types(types)
         types = types.map do |name, type|
-          index = columns.index(name.to_s)
+          index = columns.index(name.to_sym)
           [index, type] if index
         end
         Hash[*types.compact.flatten]
       end
 
       def columns
-        @columns ||= @dbf.columns.map(&:name).map(&:downcase)
-      end
-
-      def columns_s
-        columns.map { |c| %("#{c}") }.join(',')
+        @columns ||= @dbf.columns.map(&:name).map(&:downcase).map(&:to_sym)
       end
 
       def prepare
-        @raw_connection.exec(
-          "TRUNCATE TABLE #{@table_name}; SET client_min_messages TO warning;"
-        )
+        @db[@table_name].truncate
+        @db.run('SET client_min_messages TO warning;')
       end
 
-      def start
-        @raw_connection.exec(
-          "COPY #{@table_name} (#{columns_s}) FROM STDIN BINARY\n"
-        )
-      end
-
-      def copy
+      def copy_into
         io = @encoder.get_io
 
-        while (line = io.readpartial(BLOCK_SIZE))
-          @raw_connection.put_copy_data(line)
-        end
-      rescue EOFError => _e
-        return
-      end
-
-      def finish
-        @raw_connection.put_copy_end
-
-        while (res = @raw_connection.get_result)
-          result_status = res.res_status(res.result_status)
-          unless result_status == 'PGRES_COMMAND_OK'
-            fail "Import failure: #{result_status}"
+        @db.copy_into(@table_name.to_sym, columns: columns, format: :binary) do
+          begin
+            io.readpartial(BLOCK_SIZE)
+          rescue EOFError => _e
+            nil
           end
         end
       end
 
-      BLOCK_SIZE = 10_240
+      BLOCK_SIZE = 65_536 # 10_240
     end
   end
 end

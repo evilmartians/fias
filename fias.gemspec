@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'dbf'
   spec.add_dependency 'activesupport', '> 3'
-  spec.add_dependency 'activerecord', '> 3'
+  spec.add_dependency 'sequel'
   spec.add_dependency 'pg_data_encoder'
   spec.add_dependency 'httparty'
   spec.add_dependency 'pg'
