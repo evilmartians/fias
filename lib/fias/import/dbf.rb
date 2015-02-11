@@ -5,8 +5,6 @@ module Fias
         @path = path
         @files = {}
 
-        puts Dir["#{@path}/*"].entries.inspect
-
         unless Dir.exist?(@path)
           fail ArgumentError, "FIAS database path #{@path} does not exists"
         end
@@ -47,7 +45,7 @@ module Fias
         tables = (1..99).map do |n|
           [
             format('%s%0.2d', title, n).to_sym,
-            format('%s%0.2d.dbf', title.upcase, n)
+            format('%s%0.2d.DBF', title.upcase, n)
           ]
         end
 
