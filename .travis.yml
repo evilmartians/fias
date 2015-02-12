@@ -9,3 +9,6 @@ sudo: false
 addons:
   code_climate:
     repo_token: 11011732891441d394d80e3469bc3dc1c24e1766a1b017bf2c7680e90d4b9225
+
+env:
+  - JRUBY_OPTS="-Xcext.enabled=true"
