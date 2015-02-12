@@ -53,7 +53,7 @@ Gem uses `COPY FROM STDIN BINARY` to import data. Works with PostgreSQL only.
 4. Using UUID type field as a primary key as it used in FIAS is not a good idea if you want to use ancestry or closure_tree gems to navigate through record tree.
 5. Typical SQL production server settings are optimized for reading, so import on production could take dramatically long time.
 
-## Notes on workflow and initial import
+## Notes on initial import workflow
 
 1. Use raw FIAS tables just as a temporary data source for creating/updating primary address objects table in your app.
 2. The only requirement is to keep AOGUID, PARENTGUID and AOID fields in target table. You will need it for updating.

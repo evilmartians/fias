@@ -1,3 +1,4 @@
+# Can be run in cloned repo
 # DATABASE_URL=postgres://localhost/fias bundle exec ruby create.rb
 
 require 'pg_data_encoder'
