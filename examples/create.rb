@@ -80,7 +80,7 @@ def copy_fias_data
 end
 
 def restore_hierarchy
-  puts 'Restoring hierarchy...'
+  puts 'Restoring parent_id values...'
   Fias::Import::RestoreParentId.new(ADDRESS_OBJECTS).restore
 end
 

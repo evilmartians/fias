@@ -10,7 +10,7 @@ module Fias
       end
 
       def restore
-        ids_by_parent_id.each do |parent_id, ids|
+        id_grouped_by_parent_id.each do |parent_id, ids|
           @scope.where(id: ids).update(parent_id: parent_id)
         end
       end
@@ -38,7 +38,7 @@ module Fias
         end
       end
 
-      def ids_by_parent_id
+      def id_grouped_by_parent_id
         {}.tap do |rows|
           id_parent_id_tuples.each do |(id, parent_id)|
             rows[parent_id] ||= []
