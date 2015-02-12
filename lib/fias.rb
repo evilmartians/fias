@@ -10,7 +10,7 @@ require 'fias/import/dbf'
 require 'fias/import/tables'
 require 'fias/import/download_service'
 require 'fias/import/copy'
-require 'fias/import/tree_builder'
+require 'fias/import/restore_parent_id'
 require 'fias/railtie' if defined?(Rails)
 
 module Fias

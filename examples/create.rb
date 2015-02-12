@@ -79,19 +79,11 @@ def copy_fias_data
   end
 end
 
-def apply_hierarchy
-  parent_map = Fias::Import::TreeBuilder.new(
-    DB, table: ADDRESS_OBJECTS_TABLE_NAME, key: :aoguid, parent_key: :parentguid
-  ).parent_map
-
-  bar = create_bar(parent_map.size)
-
-  parent_map.each do |parent_id, ids|
-    ADDRESS_OBJECTS.where(id: ids).update(parent_id: parent_id)
-    bar.increment
-  end
+def restore_hierarchy
+  puts 'Restoring hierarchy...'
+  Fias::Import::RestoreParentId.new(ADDRESS_OBJECTS).restore
 end
 
 create_table
 copy_fias_data
-apply_hierarchy
+restore_hierarchy
