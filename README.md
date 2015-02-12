@@ -13,6 +13,8 @@ Designed for use with Ruby on Rails and a PostgreSQL backend.
 <img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg" alt="Sponsored by Evil Martians" width="236" height="54">
 </a>
 
+Think twice before you decide to use FIAS in your project. [КЛАДР в облаке](https://kladr-api.ru/) could be better solution for you.
+
 ## Installation
 
 Add this line to your application's Gemfile:
