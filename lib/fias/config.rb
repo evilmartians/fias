@@ -10,6 +10,8 @@ module Fias
       yield(self)
     end
 
+    attr_reader :index, :longs, :shorts, :aliases, :exceptions
+
     def add_name(long, short, options = {})
       aliases = options.delete(:aliases) || []
 
@@ -23,24 +25,6 @@ module Fias
     def add_exception(long, short)
       @exceptions[Unicode.downcase(short)] = [short, long]
       @exceptions[Unicode.downcase(long)] = [short, long]
-    end
-
-    def search(key)
-      long = @index[Unicode.downcase(key)]
-      return nil unless long
-      [long, short_for(long), aliases_for(long)].flatten.compact
-    end
-
-    def short_for(long)
-      @shorts[Unicode.downcase(long)]
-    end
-
-    def aliases_for(long)
-      @aliases[Unicode.downcase(long)]
-    end
-
-    def search_exception(name)
-      @exceptions[Unicode.downcase(name)]
     end
 
     private
