@@ -1,41 +1,32 @@
 module Fias
   class Config
     def initialize
+      @index = {}
       @longs = {}
       @shorts = {}
       @aliases = {}
-      @index = {}
       @append_exceptions = {}
 
       yield(self)
     end
 
-    def canonical(long, short, options = {})
+    def add_name(long, short, options = {})
       aliases = options.delete(:aliases) || []
 
-      dc_long = Unicode.downcase(long)
-      dc_short = Unicode.downcase(short)
+      @longs[Unicode.downcase(short)] = long
+      @shorts[Unicode.downcase(long)] = short
+      @aliases[Unicode.downcase(long)] = aliases
 
-      @longs[dc_short] = long
-      @shorts[dc_long] = short
-      @aliases[dc_long] = aliases
-
-      @index[dc_long] = long
-      if dc_short != dc_long
-        @index[dc_short] = long
-        @index[dc_short[0..-2]] = long if dc_short[-1] == '.'
-      end
-
-      aliases.each { |a| @index[a] = long }
+      populate_index(long, short, aliases)
     end
 
-    def exception_for_append(long, short)
+    def add_exception(long, short)
       @append_exceptions[Unicode.downcase(short)] = [short, long]
       @append_exceptions[Unicode.downcase(long)] = [short, long]
     end
 
-    def search(name)
-      long = @index[Unicode.downcase(name)]
+    def search(key)
+      long = @index[Unicode.downcase(key)]
       return nil unless long
       [long, short_for(long), aliases_for(long)].flatten.compact
     end
@@ -50,6 +41,22 @@ module Fias
 
     def search_append_exception(name)
       @append_exceptions[Unicode.downcase(name)]
+    end
+
+    private
+
+    def populate_index(long, short, aliases)
+      long_downcase = Unicode.downcase(long)
+      short_downcase = Unicode.downcase(short)
+
+      @index[long_downcase] = long
+
+      if long_downcase != short_downcase
+        @index[short_downcase] = long
+        @index[short_downcase[0..-2]] = long if short_downcase[-1] == '.'
+      end
+
+      aliases.each { |al| @index[Unicode.downcase(al)] = long }
     end
   end
 end
