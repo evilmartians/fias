@@ -37,12 +37,8 @@ module Fias
         end
 
         def append_dot(short)
-          return short unless need_dot?(short)
+          return short unless Fias.config.need_dot?(short)
           "#{short}."
-        end
-
-        def need_dot?(short)
-          Fias.config.need_dot?(short)
         end
 
         REPUBLIC = 'республика'
