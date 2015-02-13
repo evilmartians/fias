@@ -65,11 +65,32 @@ Gem uses `COPY FROM STDIN BINARY` to import data. Works with PostgreSQL only.
 
 [See example](examples/create.rb)
 
-## Toponym name building
+## Toponyms
 
-Every FIAS address object has two fields: `formalname` holding the name of a geographical object and `shortname` holding it's type (street, city, etc).
+Every FIAS address object has two fields: `formalname` holding the name of a geographical object and `shortname` holding it's type (street, city, etc). FIAS has a list of all available `shortname` values and corresponding long forms in `address_object_types` table (SOCRBASE.DBF).
 
-Use `Fias::Name::Short` to build full names in conformity with the rules of grammar:
+### Canonical forms
+
+In real life people use a lot of short name variations. For example, 'проспект' can be shortened to 'пр' or 'пр-кт'.
+
+You can convert any type name to canonical form:
+
+```ruby
+Fias::Name::Short.canonical('поселок')
+# => [
+#  'поселок', # FIAS canonical full name
+#  'п',       # FIAS canonical short name (as in address_objects table)
+#  'п.',      # Short name with dot if needed
+#  'пос',     # Alias
+#  'посёлок'  # Alias
+# ]
+```
+
+See [fias.rb](lib/fias.rb) for a settings.
+
+### Append address object type to toponym
+
+Use `Fias::Name::Short` to build toponym names in conformity with the rules of grammar:
 
 ```ruby
 Fias::Name::Short.append('Санкт-Петербург', 'г')
@@ -85,26 +106,7 @@ Fias::Name::Short.append('Чеченская', 'республика')
 # => ['Чеченская Респ.', 'Чеченская Республика']
 ```
 
-## Canonical type names
-
-FIAS has a list of all available address object types in address_object_types table (SOCRBASE.DBF). In real life people could use a lot of short name variations for single object type. For example, 'проспект' can be shortened to 'пр' or 'пр-кт'.
-
-You can get canonical type name used by FIAS:
-
-```ruby
-Fias::Name::Short.canonical('поселок')
-# => [
-#  'поселок', # FIAS canonical full name
-#  'п',       # FIAS canonical short name
-#  'п.',      # Short name as an abbrevation (with dot if needed)
-#  'пос',     # Aliases: other forms of type name
-#  'посёлок'
-# ]
-```
-
-Pass any form of type name to `#canonical` (full, short, an alias).
-
-See [fias.rb](lib/fias.rb) for a name settings.
+You can pass any form of type name.
 
 ## Contributors
 
