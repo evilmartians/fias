@@ -9,7 +9,7 @@ module Fias
         end
 
         def append(name, short_name)
-          long, short, _ = canonical(short_name)
+          long, _, short, _ = canonical(short_name)
 
           exception = search_exception(name)
           return exception.reverse if exception
@@ -22,7 +22,9 @@ module Fias
         def search(key)
           long = Fias.config.index[Unicode.downcase(key)]
           return nil unless long
-          [long, short_for(long), aliases_for(long)].flatten.compact
+          short = short_for(long)
+          short_stripped = short_for(long).gsub(/\.$/, '')
+          [long, short_stripped, short, aliases_for(long)].flatten.compact
         end
 
         def short_for(long)
