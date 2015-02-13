@@ -28,7 +28,9 @@ module Fias
           return [name] + [short_names].flatten if short_names
 
           full_name = Fias.full_names[name]
-          return [full_name, Fias.short_names[full_name]] if full_name
+          return unless full_name
+
+          [full_name] + [Fias.short_names[full_name]].flatten
         end
 
         def apply_republic_exception(canonical)
@@ -59,9 +61,9 @@ module Fias
         end
 
         def dotable?(long, short)
-          !UNDOTABLE.include?(short) ||
-            !short.include?('-') ||
-            !Unicode.downcase(short) == Unicode.downcase(long)
+          !UNDOTABLE.include?(short) &&
+            !short.include?('-') &&
+            Unicode.downcase(short) != Unicode.downcase(long)
         end
 
         REPUBLIC = 'республика'
