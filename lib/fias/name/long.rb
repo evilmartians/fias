@@ -36,8 +36,8 @@ module Fias
           short_name = match[2]
 
           rate =
-            (ends_with_dot?(short_name) * 3) +
-            (starts_with_small_letter?(short_name) * 2) +
+            (ends_with_dot?(short_name) * REWARD[:dot]) +
+            (starts_with_small_letter?(short_name) * REWARD[:small_letter]) +
             (border_proximity(name, match))
 
           rate *= 100
@@ -47,7 +47,7 @@ module Fias
         end
 
         def border_proximity(name, match)
-          head = name.size - match.begin(1) + 1
+          head = name.size - match.begin(1) + REWARD[:head]
           tail = match.end(2)
           [head, tail].max
         end
@@ -75,6 +75,10 @@ module Fias
         end
 
         SMALL_LETTER = /[а-яё]/u
+
+        REWARD = {
+          dot: 3, small_letter: 2, head: 1
+        }
       end
     end
   end
