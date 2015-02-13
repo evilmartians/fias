@@ -15,7 +15,7 @@ module Fias
           return append_exception if append_exception
 
           [
-            concat(append_dot(short), name),
+            concat(short, name),
             concat(long, name)
           ]
         end
@@ -34,11 +34,6 @@ module Fias
         def must_append?(name)
           ending = name[-2..-1]
           ENDINGS_TO_APPEND.include?(ending) || name =~ JUST_NUMBER
-        end
-
-        def append_dot(short)
-          return short unless Fias.config.need_dot?(short)
-          "#{short}."
         end
 
         REPUBLIC = 'республика'

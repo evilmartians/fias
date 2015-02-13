@@ -4,8 +4,7 @@ module Fias
       @longs = {}
       @shorts = {}
       @aliases = {}
-      @dots = {}
-      @search = {}
+      @index = {}
       @append_exceptions = {}
 
       yield(self)
@@ -21,11 +20,13 @@ module Fias
       @shorts[dc_long] = short
       @aliases[dc_long] = aliases
 
-      @search[dc_long] = long
-      @search[dc_short] = long if dc_short != dc_long
+      @index[dc_long] = long
+      if dc_short != dc_long
+        @index[dc_short] = long
+        @index[dc_short[0..-2]] = long if dc_short[-1] == '.'
+      end
 
-      aliases.each { |a| @search[a] = long }
-      @dots[dc_short] = options.delete(:dot).nil?
+      aliases.each { |a| @index[a] = long }
     end
 
     def exception_for_append(long, short)
@@ -34,8 +35,7 @@ module Fias
     end
 
     def search(name)
-      name = Unicode.downcase(name)
-      long = @search[name]
+      long = @index[Unicode.downcase(name)]
       return nil unless long
       [long, short_for(long), aliases_for(long)].flatten.compact
     end
@@ -46,10 +46,6 @@ module Fias
 
     def aliases_for(long)
       @aliases[Unicode.downcase(long)]
-    end
-
-    def need_dot?(long)
-      @dots[Unicode.downcase(long)]
     end
 
     def search_append_exception(name)
