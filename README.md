@@ -85,7 +85,26 @@ Fias::Name::Short.append('Чеченская', 'республика')
 # => ['Чеченская Респ.', 'Чеченская Республика']
 ```
 
-See [fias.rb](lib/fias.rb) for available shortnames. You can change configuration simply copying `#configure` block somewhere into your application initializer.
+## Canonical type names
+
+FIAS has a list of all available address object types in address_object_types table (SOCRBASE.DBF). In real life people could use a lot of short name variations for single object type. For example, 'проспект' can be shortened to 'пр' or 'пр-кт'.
+
+You can get canonical type name:
+
+```ruby
+Fias::Name::Short.canonical('поселок')
+# => [
+#  'поселок', # Canonical full name
+#  'п',       # Canonical short name as it used in address_objects shortname field
+#  'п.',      # Short name as an abbrevation (with dot, or equal to canonical)
+#  'пос',     # Aliases: other forms of type name used
+#  'посёлок'
+# ]
+```
+
+Pass any form of type name to `#canonical` (full, short, an alias).
+
+See [fias.rb](lib/fias.rb) for a name settings.
 
 ## Contributors
 
