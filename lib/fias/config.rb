@@ -5,7 +5,7 @@ module Fias
       @longs = {}
       @shorts = {}
       @aliases = {}
-      @append_exceptions = {}
+      @exceptions = {}
 
       yield(self)
     end
@@ -21,8 +21,8 @@ module Fias
     end
 
     def add_exception(long, short)
-      @append_exceptions[Unicode.downcase(short)] = [short, long]
-      @append_exceptions[Unicode.downcase(long)] = [short, long]
+      @exceptions[Unicode.downcase(short)] = [short, long]
+      @exceptions[Unicode.downcase(long)] = [short, long]
     end
 
     def search(key)
@@ -39,8 +39,8 @@ module Fias
       @aliases[Unicode.downcase(long)]
     end
 
-    def search_append_exception(name)
-      @append_exceptions[Unicode.downcase(name)]
+    def search_exception(name)
+      @exceptions[Unicode.downcase(name)]
     end
 
     private

@@ -11,13 +11,10 @@ module Fias
         def append(name, short_name)
           long, short, _ = canonical(short_name)
 
-          append_exception = Fias.config.search_append_exception(name)
-          return append_exception if append_exception
+          exception = Fias.config.search_exception(name)
+          return exception if exception
 
-          [
-            concat(short, name),
-            concat(long, name)
-          ]
+          [concat(short, name), concat(long, name)]
         end
 
         private
