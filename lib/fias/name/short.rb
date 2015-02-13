@@ -3,16 +3,16 @@ module Fias
     module Short
       class << self
         def canonical(name)
-          result = search(name)
+          result = search(name) || search_exception(name)
           result || fail("Unknown abbrevation: #{name}")
-          apply_republic_exception(result)
+          fix_republic_case(result)
         end
 
         def append(name, short_name)
           long, short, _ = canonical(short_name)
 
           exception = search_exception(name)
-          return exception if exception
+          return exception.reverse if exception
 
           [concat(short, name), concat(long, name)]
         end
@@ -37,7 +37,7 @@ module Fias
           Fias.config.exceptions[Unicode.downcase(name)]
         end
 
-        def apply_republic_exception(canonical)
+        def fix_republic_case(canonical)
           return canonical unless canonical[0] == REPUBLIC
           canonical.map { |n| Unicode.upcase(n[0]) + n[1..-1] }
         end

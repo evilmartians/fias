@@ -23,8 +23,8 @@ module Fias
     end
 
     def add_exception(long, short)
-      @exceptions[Unicode.downcase(short)] = [short, long]
-      @exceptions[Unicode.downcase(long)] = [short, long]
+      @exceptions[Unicode.downcase(short)] = [long, short]
+      @exceptions[Unicode.downcase(long)] = [long, short]
     end
 
     private

@@ -9,7 +9,8 @@ describe Fias::Name::Short do
       'микрорайон' => %w(микрорайон мкр. мкрн микр),
       'АО' => ['автономный округ', 'АО'],
       'Аобл' => ['автономная область', 'Аобл'],
-      'республика' => %w(Республика Респ.)
+      'республика' => %w(Республика Респ.),
+      'Чувашия' => ['Чувашская Республика - Чувашия', 'Чувашия']
     }.each do |to, normalized|
       it "#{to} must become #{normalized.inspect}" do
         expect(described_class.canonical(to)).to eq(normalized)
