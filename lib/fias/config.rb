@@ -8,6 +8,8 @@ module Fias
       @exceptions = {}
 
       yield(self)
+
+      finalize_index
     end
 
     attr_reader :index, :longs, :shorts, :aliases, :exceptions
@@ -31,7 +33,7 @@ module Fias
       long_downcase = Unicode.downcase(long)
       short_downcase = Unicode.downcase(short)
 
-      @index[long_downcase] = long
+      populate_long_permutations(long)
 
       if long_downcase != short_downcase
         @index[short_downcase] = long
@@ -39,6 +41,17 @@ module Fias
       end
 
       aliases.each { |al| @index[Unicode.downcase(al)] = long }
+    end
+
+    def populate_long_permutations(long)
+      Unicode.downcase(long).split(' ').permutation.each do |variant|
+        @index[variant.join(' ')] = long
+      end
+    end
+
+    def finalize_index
+      @index = @index.sort_by { |key, _| key.size }.reverse
+      @index = Hash[*@index.flatten]
     end
   end
 end
