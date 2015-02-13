@@ -65,6 +65,21 @@ Gem uses `COPY FROM STDIN BINARY` to import data. Works with PostgreSQL only.
 
 [See example](examples/create.rb)
 
+## Toponym name building
+
+Every address object has two fields: `formalname` holding the name of a geographical object and `shortname` holding it's type (street, city, etc).
+
+Use `Fias::Name::Short` to build full names in conformity with the rules of grammar:
+
+```ruby
+Fias::Name::Short.append('Санкт-Петербург', 'г') # ['г. Санкт-Петербург', 'город Санкт-Петербург']
+Fias::Name::Short.append('Невский', 'пр') # ['Невский пр-кт', 'Невский проспект']
+Fias::Name::Short.append('Чечня', 'республика') # ['Респ. Чечня', 'Республика Чечня']
+Fias::Name::Short.append('Чеченская', 'республика') # ['Чеченская Респ.', 'Чеченская Республика']
+```
+
+See (lib/fias.rb) for available shortnames. You can change configuration simply copying `#configure` block somewhere into your application initializer.
+
 ## Contributors
 
 * Victor Sokolov (@gzigzigzeo)
