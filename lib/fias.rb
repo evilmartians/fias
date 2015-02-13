@@ -98,7 +98,7 @@ Fias.configure do |config|
   config.add_name('бугор', 'бугор')
   config.add_name('вал', 'вал')
   config.add_name('въезд', 'въезд')
-  config.add_name('гаражно-строительный кооперат', 'гск')
+  config.add_name('гаражно-строительный кооператив', 'гск')
   config.add_name('дорога', 'дор.')
   config.add_name('животноводческая точка', 'жт')
   config.add_name('заезд', 'заезд')
