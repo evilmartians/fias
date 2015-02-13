@@ -3,6 +3,7 @@ require 'active_support/core_ext/object/blank'
 require 'active_support/core_ext/hash/slice'
 require 'active_support/hash_with_indifferent_access'
 require 'active_support/core_ext/enumerable'
+require 'active_support/core_ext/object/try'
 require 'dbf'
 require 'httparty'
 require 'pg_data_encoder'
@@ -13,6 +14,7 @@ require 'fias/import/download_service'
 require 'fias/import/copy'
 require 'fias/import/restore_parent_id'
 require 'fias/name/short'
+require 'fias/name/long'
 require 'fias/railtie' if defined?(Rails)
 
 module Fias
