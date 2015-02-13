@@ -61,6 +61,7 @@ Gem uses `COPY FROM STDIN BINARY` to import data. Works with PostgreSQL only.
 2. The only requirement is to keep AOGUID, PARENTGUID and AOID fields in target table. You will need it for updating.
 3. Keep your addressing object table immutable. This will give you an ability to work with huge amount of addressing data locally. Send the result to production as an SQL dump.
 4. FIAS contains some duplicates. Duplicates are records which has different UUIDs but equal names, abbrevations and nesting level. You should decide what to do with it: completely remove or just mark as hidden.
+5. [closure_tree](https://github.com/mceachen/closure_tree) works great as hierarchy backend. Use [pg_closure_tree_rebuild](https://github.com/gzigzigzeo/pg_closure_tree_rebuild) to rebuild hierarchy table from scratch.
 
 [See example](examples/create.rb)
 
