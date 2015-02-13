@@ -1,6 +1,6 @@
 module Fias
   module Name
-    module Long
+    module Extract
       class << self
         def extract(name)
           return if name.blank?
@@ -71,7 +71,7 @@ module Fias
           short_name = winner[2]
           toponym = cleanup(name.gsub(winner.regexp, ' '))
           return [name] if toponym.strip.blank?
-          [cleanup(toponym), Short.canonical(short_name)].flatten
+          [cleanup(toponym), Canonical.canonical(short_name)].flatten
         end
 
         SMALL_LETTER = /[а-яё]/u

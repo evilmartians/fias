@@ -76,7 +76,7 @@ In real life people use a lot of type name variations. For example, 'просп�
 You can convert any variation to a canonical form:
 
 ```ruby
-Fias::Name::Short.canonical('поселок')
+Fias::Name::Canonical.canonical('поселок')
 # => [
 #  'поселок', # FIAS canonical full name
 #  'п',       # FIAS canonical short name (as in address_objects table)
@@ -90,21 +90,25 @@ See [fias.rb](lib/fias.rb) for a settings.
 
 ### Append type to toponym
 
-Use `Fias::Name::Short` to build toponym names in conformity with the rules of grammar:
+Use `Fias::Name::Append` to build toponym names in conformity with the rules of grammar:
 
 ```ruby
-Fias::Name::Short.append('Санкт-Петербург', 'г')
+Fias::Name::Append.append('Санкт-Петербург', 'г')
 # => ['г. Санкт-Петербург', 'город Санкт-Петербург']
 
-Fias::Name::Short.append('Невский', 'пр')
+Fias::Name::Append.append('Невский', 'пр')
 # => ['Невский пр-кт', 'Невский проспект']
 
-Fias::Name::Short.append('Чечня', 'республика')
+Fias::Name::Append.append('Чечня', 'республика')
 # => ['Респ. Чечня', 'Республика Чечня']
 
-Fias::Name::Short.append('Чеченская', 'республика')
+Fias::Name::Append.append('Чеченская', 'республика')
 # => ['Чеченская Респ.', 'Чеченская Республика']
 ```
+
+### Extract toponym
+
+
 
 You can pass any form of type name: full, short, an alias, with or without dot.
 

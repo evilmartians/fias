@@ -15,8 +15,9 @@ require 'fias/import/tables'
 require 'fias/import/download_service'
 require 'fias/import/copy'
 require 'fias/import/restore_parent_id'
-require 'fias/name/short'
-require 'fias/name/long'
+require 'fias/name/canonical'
+require 'fias/name/append'
+require 'fias/name/extract'
 require 'fias/railtie' if defined?(Rails)
 
 module Fias

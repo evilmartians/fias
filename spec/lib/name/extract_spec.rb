@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Fias::Name::Long do
+describe Fias::Name::Extract do
   {
     'г Краснодар' => %w(Краснодар город г г.),
     'г. Краснодар' => %w(Краснодар город г г.),
