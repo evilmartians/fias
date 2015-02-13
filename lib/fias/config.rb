@@ -12,9 +12,7 @@ module Fias
 
     attr_reader :index, :longs, :shorts, :aliases, :exceptions
 
-    def add_name(long, short, options = {})
-      aliases = options.delete(:aliases) || []
-
+    def add_name(long, short, aliases = [])
       @longs[Unicode.downcase(short)] = long
       @shorts[Unicode.downcase(long)] = short
       @aliases[Unicode.downcase(long)] = aliases
