@@ -5,17 +5,13 @@ module Fias
         def append(name, short_name)
           long, _, short, _ = Canonical.canonical(short_name)
 
-          exception = search_exception(name)
+          exception = Fias.config.exceptions[Unicode.downcase(name)]
           return exception.reverse if exception
 
           [concat(short, name), concat(long, name)]
         end
 
         private
-
-        def search_exception(name)
-          Fias.config.exceptions[Unicode.downcase(name)]
-        end
 
         def concat(status, name)
           must_append?(name) ? "#{name} #{status}" : "#{status} #{name}"
