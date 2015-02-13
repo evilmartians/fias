@@ -72,10 +72,17 @@ Every FIAS address object has two fields: `formalname` holding the name of a geo
 Use `Fias::Name::Short` to build full names in conformity with the rules of grammar:
 
 ```ruby
-Fias::Name::Short.append('Санкт-Петербург', 'г') # ['г. Санкт-Петербург', 'город Санкт-Петербург']
-Fias::Name::Short.append('Невский', 'пр') # ['Невский пр-кт', 'Невский проспект']
-Fias::Name::Short.append('Чечня', 'республика') # ['Респ. Чечня', 'Республика Чечня']
-Fias::Name::Short.append('Чеченская', 'республика') # ['Чеченская Респ.', 'Чеченская Республика']
+Fias::Name::Short.append('Санкт-Петербург', 'г')
+# => ['г. Санкт-Петербург', 'город Санкт-Петербург']
+
+Fias::Name::Short.append('Невский', 'пр')
+# => ['Невский пр-кт', 'Невский проспект']
+
+Fias::Name::Short.append('Чечня', 'республика')
+# => ['Респ. Чечня', 'Республика Чечня']
+
+Fias::Name::Short.append('Чеченская', 'республика')
+# => ['Чеченская Респ.', 'Чеченская Республика']
 ```
 
 See [fias.rb](lib/fias.rb) for available shortnames. You can change configuration simply copying `#configure` block somewhere into your application initializer.
