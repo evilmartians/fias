@@ -67,13 +67,13 @@ Gem uses `COPY FROM STDIN BINARY` to import data. Works with PostgreSQL only.
 
 ## Toponyms
 
-Every FIAS address object has two fields: `formalname` holding the name of a geographical object and `shortname` holding it's type (street, city, etc). FIAS has a list of all available `shortname` values and corresponding long forms in `address_object_types` table (SOCRBASE.DBF).
+Every FIAS address object has two fields: `formalname` holding toponym (the name of a geographical object) and `shortname` holding it's type (street, city, etc). FIAS contains the list of all available `shortname` values and corresponding long forms in `address_object_types` table (SOCRBASE.DBF).
 
 ### Canonical forms
 
-In real life people use a lot of short name variations. For example, 'проспект' can be shortened to 'пр' or 'пр-кт'.
+In real life people use a lot of type name variations. For example, 'проспект' can be written as 'пр' or 'пр-кт'.
 
-You can convert any type name to canonical form:
+You can convert any variation to a canonical form:
 
 ```ruby
 Fias::Name::Short.canonical('поселок')
@@ -88,7 +88,7 @@ Fias::Name::Short.canonical('поселок')
 
 See [fias.rb](lib/fias.rb) for a settings.
 
-### Append address object type to toponym
+### Append type to toponym
 
 Use `Fias::Name::Short` to build toponym names in conformity with the rules of grammar:
 
@@ -106,7 +106,7 @@ Fias::Name::Short.append('Чеченская', 'республика')
 # => ['Чеченская Респ.', 'Чеченская Республика']
 ```
 
-You can pass any form of type name.
+You can pass any form of type name: full, short, an alias, with or without dot.
 
 ## Contributors
 
