@@ -88,3 +88,6 @@ end
 create_table
 copy_fias_data
 restore_hierarchy
+
+# Next, you can search & hide duplicates, calculate hierarchy for closure_tree
+# with http://github.com/gzigzigzeo/pg_closure_tree_rebuild, etc
