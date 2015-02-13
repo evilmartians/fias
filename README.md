@@ -106,11 +106,19 @@ Fias::Name::Append.append('Чеченская', 'республика')
 # => ['Чеченская Респ.', 'Чеченская Республика']
 ```
 
+You can pass any form of type name: full, short, an alias, with or without dot.
+
 ### Extract toponym
 
+Sometimes you will need to extract toponym and it's type from a plain string:
 
+```ruby
+Fias::Name::Extract.extract('Город Санкт-Петербург')
+# => ['Санкт-Петербург', 'город', 'г', 'г.']
 
-You can pass any form of type name: full, short, an alias, with or without dot.
+Fias::Name::Extract.extract('ул. Казачий Вал')
+# => ['Казачий Вал', 'улица', 'ул', 'ул.']
+```
 
 ## Contributors
 
