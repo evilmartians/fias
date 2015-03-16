@@ -60,7 +60,7 @@ This gem uses `COPY FROM STDIN BINARY` to import data. At the moment it works wi
 1. Use raw FIAS tables just as a temporary data source for creating/updating primary address objects table for your application.
 2. The only requirement is to keep AOGUID, PARENTGUID and AOID fields in target table. You will need them for updating.
 3. Keep your addressing object table immutable. This will give you an ability to work with huge amounts of addressing data locally. Send the result to production environment via a SQL dump.
-4. FIAS contains some duplicates. Duplicates are records which have different UUIDs but equal names, abbrevations and nesting level. It is up to you to decide on how to deal with it: completely remove them or just mark as hidden.
+4. FIAS contains some duplicates. Duplicates are records which have different UUIDs but equal names, abbrevations and nesting level. It is up to you to decide on how to deal with it: completely remove them or just mark as hidden. Krasnodar city has a lot of equally named streets situated in different districts.
 5. [closure_tree](https://github.com/mceachen/closure_tree) works great as a hierarchy backend. Use [pg_closure_tree_rebuild](https://github.com/gzigzigzeo/pg_closure_tree_rebuild) to rebuild the hierarchy table from scratch.
 
 [See example](examples/create.rb).
