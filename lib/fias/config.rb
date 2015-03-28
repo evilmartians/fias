@@ -53,5 +53,7 @@ module Fias
       @index = @index.sort_by { |key, _| key.size }.reverse
       @index = Hash[*@index.flatten]
     end
+
+    LETTERS = /[а-яА-ЯёЁA-Za-z]/ui
   end
 end

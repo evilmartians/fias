@@ -18,6 +18,7 @@ require 'fias/import/restore_parent_id'
 require 'fias/name/canonical'
 require 'fias/name/append'
 require 'fias/name/extract'
+require 'fias/toponym/house_number'
 require 'fias/railtie' if defined?(Rails)
 
 module Fias
