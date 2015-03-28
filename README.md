@@ -168,12 +168,15 @@ Note that we are talking about toponym names with types extracted (see type extr
 Words are splitted according to a set of simple rules aimed to simplify disclosure of synonyms and determination optional parts.
 
 ```ruby
-Addressing::Name::Tokenizer.split("50 лет Октября")
+Addressing::Name::Split.split("50 лет Октября")
 # => ["50 лет", "октября"]
 
-Addressing::Name::Tokenizer.split("Ю.Р.Г.Эрвье")
+Addressing::Name::Split.split("Ю.Р.Г.Эрвье")
 # => ["ю.р.г.", "эрвье"]
 ```
+
+
+
 
 ## Contributors
 

@@ -49,7 +49,7 @@ require 'fias/name/canonical'
 require 'fias/name/append'
 require 'fias/name/extract'
 require 'fias/name/house_number'
-require 'fias/name/tokenizer'
+require 'fias/name/split'
 require 'fias/railtie' if defined?(Rails)
 
 Fias.configure do |config|
