@@ -23,8 +23,12 @@ module Fias
     end
   end
 
-  LETTERS = /[а-яА-ЯёЁA-Za-z]/ui
-  ANNIVESARIES      = /(\d+)(\s\-|\-|\s)лет(ия)?/ui
+  LETTERS        = /[а-яА-ЯёЁA-Za-z]/ui
+  ANNIVESARIES   = /(\d+)(\s\-|\-|\s)лет(ия)?/ui
+  INITIAL        = /#{Fias::LETTERS}{1,2}\./ui
+  INITIALS       = /(#{INITIAL}#{INITIAL}(#{INITIAL})?)(.+|$)/ui
+  SINGLE_INITIAL = /(\.|\s|^)(#{Fias::LETTERS}{1,3}\.)(.+|$)/ui
+
 end
 
 require 'unicode'
@@ -50,6 +54,7 @@ require 'fias/name/append'
 require 'fias/name/extract'
 require 'fias/name/house_number'
 require 'fias/name/split'
+require 'fias/name/synonyms'
 require 'fias/railtie' if defined?(Rails)
 
 Fias.configure do |config|

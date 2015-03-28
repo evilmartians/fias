@@ -32,8 +32,8 @@ module Fias
         end
 
         def split_initials(word)
-          m_matches = word.match(INITIALS)
-          s_matches = word.match(SINGLE_INITIAL)
+          m_matches = word.match(Fias::INITIALS)
+          s_matches = word.match(Fias::SINGLE_INITIAL)
 
           if m_matches
             m_matches.values_at(1, 3)
@@ -55,9 +55,6 @@ module Fias
         end
       end
 
-      INITIAL           = /#{Fias::LETTERS}{1,2}\./ui
-      INITIALS          = /(#{INITIAL}#{INITIAL}(#{INITIAL})?)(.+|$)/ui
-      SINGLE_INITIAL    = /(\.|\s|^)(#{Fias::LETTERS}{1,3}\.)(.+|$)/ui
       DOTWORD           = /(#{LETTERS}{2,}\.)/ui
       BRACKETS          = /(\(|\))/
       QUOTAS            = /[\"\']/
