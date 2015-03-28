@@ -120,12 +120,24 @@ Fias::Name::Extract.extract('ул. Казачий Вал')
 # => ['Казачий Вал', 'улица', 'ул', 'ул.']
 ```
 
+## Extract house number
+
+Sometimes street names comes mixed up with house numbers and you need to extract house number from a string to clean it up for searching:
+
+```ruby
+Fias::Name::HouseNumber.extract('Ново-Садовая ул,303а')
+# => ['Ново-Садовая ул', '303а']
+
+Fias::Name::HouseNumber.extract('пр.Энергетиков 72/2')
+# => ['пр.Энергетиков', '72/2']
+```
+
 ## Contributors
 
 * Victor Sokolov (@gzigzigzeo)
 * Vlad Bokov (@razum2um)
 
-Special thanks to @gazay, @kirs.
+Special thanks to @gazay.
 
 ## Contributing
 
