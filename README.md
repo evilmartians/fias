@@ -145,13 +145,22 @@ Given you have a set of structured addresses:
 
 You need to find FIAS item for each address in set.
 
-Your project may use the search engine (Sphinx, ElasticSearch) or plain SQL database. Search principle is the same, but implementation differs. Library contains helpful modules and base classes to faciliate searching.
+Your project may use the search engine (Sphinx, ElasticSearch) or plain SQL database. Search principle is the same, but implementation differs. Library contains helpful modules and base classes to facilitate searching.
 
 ### Indexing
 
+Each toponym consists of words. Some of them are special. That special words could have different forms, could be skipped by user or could be written differently in FIAS database itself.
+
+* "50 лет Октября" == "50-летия Октября"
+* "1-ая Советская" == "1 Советская" || "Советская 1-я"
+* "Большой Проспект П.С." == "Большой Проспект Петроградской"
+* "имени Максима Горького" == "им. Горького"
+* "ул. Цюрупы" == "Цурюпы" || "Цюрупа" || "Цорюпы" || "Цорупа" (that's my favorite!)
+'цюрупа', 'цурюпа', 'цурюпы', 'цюрупы'
+
+You should trait them as equal during search.
+
 #### Tokenization
-
-
 
 ## Contributors
 
