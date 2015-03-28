@@ -56,7 +56,7 @@ describe Fias::Name::Extract do
       'Морозов', 'коттеджный поселок', 'кп', 'кп'
     ],
     '' => nil,
-    nil => nil,
+    nil => nil
   }.each do |name, expected|
     it "must extract status from #{name} correctly" do
       given = described_class.extract(name)
