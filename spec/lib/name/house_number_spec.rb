@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Fias::Toponym::HouseNumber do
+describe Fias::Name::HouseNumber do
   {
     '14'                            => ['14', nil],
     'мкр. 14'                       => ['мкр. 14', nil],

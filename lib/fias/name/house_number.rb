@@ -1,5 +1,5 @@
 module Fias
-  module Toponym
+  module Name
     module HouseNumber
       class << self
         def extract(name)
