@@ -54,18 +54,17 @@ module Fias
         end
       end
 
-      COLON = /\,/
-      JUST_A_NUMBER = /^[\s\d]+$/
-      STOPWORDS = /(микрорайон|линия|микр|мкрн|мкр|лин)/ui
+      COLON                 = /\,/
+      JUST_A_NUMBER         = /^[\s\d]+$/
+      STOPWORDS             = /(микрорайон|линия|микр|мкрн|мкр|лин)/ui
       LINE_OR_MICRODISTRICT = /#{STOPWORDS}\.?[\s\w+]?\d+$/ui
-      NUMBER =
-        /\d+\/?#{Fias::Config::LETTERS}?\d*/ui
-      ENDS_WITH_NUMBER = /(#{NUMBER})$/ui
-      HOUSE_WORDS = %w(ом д дом вл кв)
+      NUMBER                = /\d+\/?#{Fias::LETTERS}?\d*/ui
+      ENDS_WITH_NUMBER      = /(#{NUMBER})$/ui
+      HOUSE_WORDS           = %w(ом д дом вл кв)
       HOUSE_WORD =
         /(\s|\,|\.|^)(#{or_words(HOUSE_WORDS)})(\s|\,|\.|$)/ui
-      HOUSING_WORDS = %w(корпус корп к)
-      NUMBER_WITH_HOUSING =
+      HOUSING_WORDS         = %w(корпус корп к)
+      NUMBER_WITH_HOUSING   =
         /#{NUMBER}[\s\,\.]+(#{or_words(HOUSING_WORDS)})[\s\,\.]+#{NUMBER}/ui
     end
   end

@@ -1,3 +1,32 @@
+module Fias
+  class << self
+    attr_reader :config
+
+    def configure(&block)
+      @config = Config.new(&block)
+    end
+
+    def indivisible_words
+      @indivisible_words ||=
+        config
+        .synonyms
+        .flatten
+        .find_all { |w| w.include?(' ') }
+        .sort_by(&:size)
+        .reverse
+        .freeze
+    end
+
+    def word
+      @word ||=
+        /(#{ANNIVESARIES}|#{indivisible_words.join('|')}|[#{LETTERS}\"\'\d\.\)\(\/\-]+)(\s|\,|$)/ui
+    end
+  end
+
+  LETTERS = /[а-яА-ЯёЁA-Za-z]/ui
+  ANNIVESARIES      = /(\d+)(\s\-|\-|\s)лет(ия)?/ui
+end
+
 require 'unicode'
 require 'active_support/core_ext/object/blank'
 require 'active_support/core_ext/hash/slice'
@@ -20,17 +49,8 @@ require 'fias/name/canonical'
 require 'fias/name/append'
 require 'fias/name/extract'
 require 'fias/name/house_number'
+require 'fias/name/tokenizer'
 require 'fias/railtie' if defined?(Rails)
-
-module Fias
-  class << self
-    attr_reader :config
-
-    def configure(&block)
-      @config = Config.new(&block)
-    end
-  end
-end
 
 Fias.configure do |config|
   config.add_name('автономный округ', 'АО')
@@ -161,5 +181,12 @@ Fias.configure do |config|
 
   proper_names.map(&:strip).each do |name|
     config.add_proper_name(name)
+  end
+
+  synonyms =
+    YAML.load_file(File.join(File.dirname(__FILE__), '../config/synonyms.yml'))
+
+  synonyms.each do |synonym|
+    config.add_synonym(*synonym)
   end
 end

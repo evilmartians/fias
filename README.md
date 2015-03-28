@@ -149,18 +149,31 @@ Your project may use the search engine (Sphinx, ElasticSearch) or plain SQL data
 
 ### Indexing
 
-Each toponym consists of words. Some of them are special. That special words could have different forms, could be skipped by user or could be written differently in FIAS database itself.
+Each toponym consists of words. Some of them are special. That special words could have synonyms or different for forms, could be skipped by user or could be written differently in FIAS database itself.
+
+Examples:
 
 * "50 лет Октября" == "50-летия Октября"
 * "1-ая Советская" == "1 Советская" || "Советская 1-я"
 * "Большой Проспект П.С." == "Большой Проспект Петроградской"
-* "имени Максима Горького" == "им. Горького"
+* "имени Максима Горького" == "им. Горького" || "Горького"
 * "ул. Цюрупы" == "Цурюпы" || "Цюрупа" || "Цорюпы" || "Цорупа" (that's my favorite!)
-'цюрупа', 'цурюпа', 'цурюпы', 'цюрупы'
 
 You should trait them as equal during search.
 
-#### Tokenization
+Note that we are talking about toponym names with types extracted (see type extraction above).
+
+#### Splitting the words (tokenization)
+
+Words are splitted according to a set of simple rules aimed to simplify disclosure of synonyms and determination optional parts.
+
+```ruby
+Addressing::Name::Tokenizer.split("50 лет Октября")
+# => ["50 лет", "октября"]
+
+Addressing::Name::Tokenizer.split("Ю.Р.Г.Эрвье")
+# => ["ю.р.г.", "эрвье"]
+```
 
 ## Contributors
 
