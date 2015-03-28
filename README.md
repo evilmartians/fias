@@ -132,6 +132,27 @@ Fias::Name::HouseNumber.extract('пр.Энергетиков 72/2')
 # => ['пр.Энергетиков', '72/2']
 ```
 
+## Searching
+
+Given you have a set of structured addresses:
+
+```ruby
+[
+  { region: 'Еврейская АО', city: 'г. Биробиджан', street: 'Шолом-Алейхема' },
+  { city: 'Санкт-Петербург', street: 'Лермонтовский проспект' }
+]
+```
+
+You need to find FIAS item for each address in set.
+
+Your project may use the search engine (Sphinx, ElasticSearch) or plain SQL database. Search principle is the same, but implementation differs. Library contains helpful modules and base classes to faciliate searching.
+
+### Indexing
+
+#### Tokenization
+
+
+
 ## Contributors
 
 * Victor Sokolov (@gzigzigzeo)

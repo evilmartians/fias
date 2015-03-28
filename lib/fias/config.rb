@@ -6,6 +6,7 @@ module Fias
       @shorts = {}
       @aliases = {}
       @exceptions = {}
+      @proper_names = []
 
       yield(self)
 
@@ -13,6 +14,7 @@ module Fias
     end
 
     attr_reader :index, :longs, :shorts, :aliases, :exceptions
+    attr_reader :proper_names, :synonyms
 
     def add_name(long, short, aliases = [])
       @longs[Unicode.downcase(short)] = long
@@ -25,6 +27,10 @@ module Fias
     def add_exception(long, short)
       @exceptions[Unicode.downcase(short)] = [long, short]
       @exceptions[Unicode.downcase(long)] = [long, short]
+    end
+
+    def add_proper_name(name)
+      @proper_names << name
     end
 
     private

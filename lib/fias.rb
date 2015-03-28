@@ -5,6 +5,7 @@ require 'active_support/hash_with_indifferent_access'
 require 'active_support/core_ext/enumerable'
 require 'active_support/core_ext/object/try'
 require 'active_support/core_ext/array/extract_options'
+require 'active_support/core_ext/array/wrap'
 require 'dbf'
 require 'httparty'
 require 'pg_data_encoder'
@@ -154,4 +155,11 @@ Fias.configure do |config|
     'Ханты-Мансийский Автономный округ - Югра',
     'Ханты-Мансийский Автономный округ - Югра'
   )
+
+  proper_names =
+    File.readlines(File.join(File.dirname(__FILE__), '../config/names.txt'))
+
+  proper_names.map(&:strip).each do |name|
+    config.add_proper_name(name)
+  end
 end
