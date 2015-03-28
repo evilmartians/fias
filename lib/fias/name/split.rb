@@ -3,15 +3,12 @@ module Fias
     module Split
       class << self
         def split(name)
-          sanitize(name)
-            .gsub(QUOTAS, '')
-            .scan(Fias.word)
-            .map { |word, _| word.gsub(BRACKETS, '') }
-            .map { |word, _| split_initials(word) || word }
-            .compact
-            .flatten
-            .map { |word, _| split_dotwords(word) || word }
-            .compact
+          words = sanitize(name).scan(Fias.word)
+          words = cleanup_brackets(words)
+          words = split_all_initials(words)
+          words = split_all_dotwords(words)
+
+          words
             .reject(&:blank?)
             .flatten
             .uniq
@@ -20,7 +17,18 @@ module Fias
         private
 
         def sanitize(name)
-          Unicode.downcase(name).gsub('ё', 'е')
+          Unicode.downcase(name).gsub('ё', 'е').gsub(QUOTAS, '')
+        end
+
+        def cleanup_brackets(words)
+          words.map { |word, _| word.gsub(BRACKETS, '') }
+        end
+
+        def split_all_initials(words)
+          words
+            .map { |word, _| split_initials(word) || word }
+            .compact
+            .flatten
         end
 
         def split_initials(word)
@@ -32,6 +40,12 @@ module Fias
           elsif s_matches
             s_matches.values_at(2, 3)
           end
+        end
+
+        def split_all_dotwords(words)
+          words
+            .map { |word, _| split_dotwords(word) || word }
+            .compact
         end
 
         def split_dotwords(word)

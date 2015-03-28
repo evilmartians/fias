@@ -163,7 +163,7 @@ You should trait them as equal during search.
 
 Note that we are talking about toponym names with types extracted (see type extraction above).
 
-#### Splitting the words (tokenization)
+#### Splitting the words
 
 Words are splitted according to a set of simple rules aimed to simplify disclosure of synonyms and determination optional parts.
 
