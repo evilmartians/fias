@@ -28,12 +28,13 @@ module Fias
   INITIAL        = /#{Fias::LETTERS}{1,2}\./ui
   INITIALS       = /(#{INITIAL}#{INITIAL}(#{INITIAL})?)(.+|$)/ui
   SINGLE_INITIAL = /(\.|\s|^)(#{Fias::LETTERS}{1,3}\.)(.+|$)/ui
-
+  FEDERAL_CITIES = ['Москва', 'Санкт-Петербург', 'Севастополь', 'Байконур']
 end
 
 require 'unicode'
 require 'active_support/core_ext/object/blank'
 require 'active_support/core_ext/hash/slice'
+require 'active_support/core_ext/hash/keys'
 require 'active_support/hash_with_indifferent_access'
 require 'active_support/core_ext/enumerable'
 require 'active_support/core_ext/object/try'
@@ -55,6 +56,7 @@ require 'fias/name/extract'
 require 'fias/name/house_number'
 require 'fias/name/split'
 require 'fias/name/synonyms'
+require 'fias/query'
 require 'fias/railtie' if defined?(Rails)
 
 Fias.configure do |config|

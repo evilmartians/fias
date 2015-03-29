@@ -209,9 +209,25 @@ Addressing::Name::Synonyms.forms('им. И.П.Павлова')
 
 First of all you need to save splitted name for each record in your addressing table. See [indexing example](examples/generate_index.rb).
 
-### Quering
+### Querying
 
+Search query contains three phases:
+1. Preparation: sanitizing request values, splitting toponym name and type, etc.
+2. Querying: finding possible candidates in addressing object tree.
+3. Decision: determining most suitable result.
 
+#### Preparation
+
+```ruby
+query = Fias::Query.new(
+  region: 'Еврейская АО', city: 'г. Биробиджан', street: 'Шолом-Алейхема'
+)
+
+query.sanitized
+# => ....
+```
+
+Allowed part keys are: `%w(region district city subcity street)`
 
 ## Contributors
 
