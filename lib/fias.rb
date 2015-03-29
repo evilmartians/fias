@@ -57,6 +57,7 @@ require 'fias/name/house_number'
 require 'fias/name/split'
 require 'fias/name/synonyms'
 require 'fias/query'
+require 'fias/query/params'
 require 'fias/railtie' if defined?(Rails)
 
 Fias.configure do |config|

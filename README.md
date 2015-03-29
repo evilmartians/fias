@@ -224,7 +224,7 @@ query = Fias::Query.new(
   region: 'Еврейская АОбл', city: 'г. Биробиджан', street: 'Шолом-Алейхема'
 )
 
-query.sanitized
+query.params.sanitized
 # => {
 #   :region=>["Еврейская", "автономная область", "Аобл", "Аобл"],
 #   :city=>["Биробиджан", "город", "г", "г."],

@@ -8,7 +8,7 @@ describe Fias::Query do
       to.symbolize_keys!
 
       it from.values.to_s do
-        expect(described_class.new(from).sanitized).to eq(to)
+        expect(described_class.new(from).params.sanitized).to eq(to)
       end
     end
   end
