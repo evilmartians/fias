@@ -232,7 +232,7 @@ query.sanitized
 # }
 ```
 
-Allowed keys are: `%w(region district city subcity street)`
+Allowed keys are: `%i(region district city subcity street)`
 
 ## Contributors
 

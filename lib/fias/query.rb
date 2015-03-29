@@ -9,6 +9,7 @@ module Fias
       extract_statuses
       remove_duplicates
       fix_federal_cities
+      strip_house_number
     end
 
     attr_reader :query, :sanitized
@@ -51,6 +52,11 @@ module Fias
       @sanitized.values.find do |value|
         value.is_a?(Array) && Fias::FEDERAL_CITIES.include?(value.first)
       end
+    end
+
+    def strip_house_number
+      return if street.blank?
+      @sanitized[:street] = Fias::Name::HouseNumber.extract(street).first
     end
   end
 end
