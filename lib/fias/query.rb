@@ -8,7 +8,7 @@ module Fias
     attr_reader :params
 
     def perform
-      assumption = @finder.perform
+      assumption = @finder.assumption
     end
 
     protected

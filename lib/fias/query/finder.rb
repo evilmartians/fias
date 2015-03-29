@@ -6,7 +6,7 @@ module Fias
         @finder = finder
       end
 
-      def perform
+      def assumption
         find_possible_variants
         reject_mismatched_names!
         build_chains
