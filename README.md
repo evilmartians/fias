@@ -207,7 +207,7 @@ Addressing::Name::Synonyms.forms('им. И.П.Павлова')
 
 #### Generating search index
 
-First of all you need to have splitted name for each record in your addressing table. See [indexing example](examples/generate_index.rb).
+First of all you need to save splitted name for each record in your addressing table. See [indexing example](examples/generate_index.rb).
 
 ## Contributors
 
