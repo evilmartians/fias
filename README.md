@@ -205,7 +205,9 @@ Addressing::Name::Synonyms.forms('им. И.П.Павлова')
 # ]
 ```
 
+#### Generating search index
 
+See [indexing example](examples/generate_index.rb) for PostgreSQL.
 
 ## Contributors
 
