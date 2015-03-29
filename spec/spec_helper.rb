@@ -16,6 +16,7 @@ if ENV['CODECLIMATE_REPO_TOKEN']
 end
 
 require 'fias'
+require 'spec/support/query'
 
 WebMock.disable_net_connect!(allow: %w(codeclimate.com))
 

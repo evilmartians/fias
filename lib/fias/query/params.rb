@@ -1,9 +1,9 @@
 module Fias
-  class Query
+  module Query
     class Params
       VALID_KEYS = %i(street subcity city district region)
 
-      def initialize(params = {})
+      def initialize(params)
         @params = params
         @params.assert_valid_keys(*VALID_KEYS)
 
