@@ -41,5 +41,5 @@ def tokenize
   end
 end
 
-#alter_table
+alter_table
 tokenize
