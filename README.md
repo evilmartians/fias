@@ -1,8 +1,7 @@
 # FIAS
 
 [![Build Status](https://travis-ci.org/evilmartians/fias.svg)](http://travis-ci.org/evilmartians/fias)
-[![Code Climate](https://codeclimate.com/github/evilmartians/fias/badges/gpa.svg)](https://codeclimate.
-com/github/evilmartians/fias)
+[![Code Climate](https://codeclimate.com/github/evilmartians/fias/badges/gpa.svg)](https://codeclimate.com/github/evilmartians/fias)
 [![Test Coverage](https://codeclimate.com/github/evilmartians/fias/badges/coverage.svg)](https://codeclimate.com/github/evilmartians/fias)
 
 Ruby wrapper for the Russian [ФИАС](http://fias.nalog.ru) database.
@@ -205,6 +204,8 @@ Addressing::Name::Synonyms.forms('им. И.П.Павлова')
 #   'павлова'
 # ]
 ```
+
+
 
 ## Contributors
 
