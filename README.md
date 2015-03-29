@@ -121,7 +121,7 @@ Fias::Name::Extract.extract('ул. Казачий Вал')
 
 ### Extract house number
 
-Sometimes street names comes mixed up with house numbers and you need to extract house number from a string to clean it up for searching:
+Sometimes street names come mixed up with house numbers, and you need to extract the house number from a string to clean it up for indexing:
 
 ```ruby
 Fias::Name::HouseNumber.extract('Ново-Садовая ул,303а')
@@ -142,13 +142,13 @@ Given you have a set of structured addresses:
 ]
 ```
 
-You need to find FIAS item for each address in set.
+You need to find a FIAS item for each address in set.
 
-Your project may use the search engine (Sphinx, ElasticSearch) or plain SQL database. Search principle is the same, but implementation differs. Library contains helpful modules and base classes to facilitate searching.
+Your project may use a full-text search engine (Sphinx, ElasticSearch) or just a SQL database. Search principles are the same, but the implementation would differ. This library contains helpful modules and base classes to facilitate searching.
 
 ### Indexing
 
-Each toponym consists of words. Some of them are special. That special words could have synonyms or different for forms, could be skipped by user or could be written differently in FIAS database itself.
+Each toponym consists of words; some of them are considered "special". Said "special" words could have synonyms or different forms, they could be skipped by user or could be written differently in FIAS database itself.
 
 Examples:
 
@@ -158,13 +158,13 @@ Examples:
 * "имени Максима Горького" == "им. Горького" || "Горького"
 * "ул. Цюрупы" == "Цурюпы" || "Цюрупа" || "Цорюпы" || "Цорупа" (that's my favorite!)
 
-You should trait them as equal during search.
+You should trait them as equal when performing search.
 
 Note that we are talking about toponym names with types extracted (see type extraction above).
 
 #### Splitting the words
 
-Words are splitted according to a set of simple rules aimed to simplify disclosure of synonyms and determination optional parts.
+Words are split according to a set of simple rules aimed to simplify disclosure of synonyms and determination of optional parts.
 
 ```ruby
 Addressing::Name::Split.split("50 лет Октября")
@@ -176,7 +176,7 @@ Addressing::Name::Split.split("Ю.Р.Г.Эрвье")
 
 #### Finding synonyms and optional words
 
-Given we have street name `им. академика И.П.Павлова` in FIAS. Most people will write it as just `Павлова`, some of them will write it as `имени Павлова`, some - `академика Павлова`. No one except the machine will write exact name.
+Given we have a street named `им. академика И.П.Павлова` in FIAS, most people will reference it as just `Павлова` street, some will write it as `имени Павлова`, and some - `академика Павлова`. Basically, nobody except the FIAS database would reference it by the exact original name.
 
 ```ruby
 Addressing::Name::Synonyms.expand('им. академика И.П.Павлова')
@@ -187,9 +187,9 @@ Addressing::Name::Synonyms.expand('им. академика И.П.Павлова
 # ["павлова"]]
 ```
 
-Returns all possible forms for each word. Empty strings marks optional words.
+Will return all possible forms for each word. Empty strings here mark optional words.
 
-You can calculate all possible name combinations:
+You can also calculate all possible name combinations:
 
 ```ruby
 Addressing::Name::Synonyms.forms('им. И.П.Павлова')
@@ -207,15 +207,15 @@ Addressing::Name::Synonyms.forms('им. И.П.Павлова')
 
 #### Generating search index
 
-First of all you need to save splitted name and ancestor ids for each record in your addressing table. See [indexing example](examples/generate_index.rb).
+Most importantly, you need to save the splitted name and ancestor ids for each record in your addressing table. See [indexing example](examples/generate_index.rb).
 
 ### Querying
 
-Search query contains three phases:
+Performing a search will execute these three steps:
 
 1. Preparation: sanitizing request values, splitting toponym name and type, etc.
 2. Querying: finding possible candidates in addressing object tree.
-3. Decision: determining most suitable result.
+3. Decision: determining the most suitable result.
 
 #### Preparation
 
