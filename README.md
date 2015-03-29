@@ -137,7 +137,7 @@ Given you have a set of structured addresses:
 
 ```ruby
 [
-  { region: 'Еврейская АО', city: 'г. Биробиджан', street: 'Шолом-Алейхема' },
+  { region: 'Еврейская АОбл', city: 'г. Биробиджан', street: 'Шолом-Алейхема' },
   { city: 'Санкт-Петербург', street: 'Лермонтовский проспект' }
 ]
 ```
@@ -220,14 +220,18 @@ Search query contains three phases:
 
 ```ruby
 query = Fias::Query.new(
-  region: 'Еврейская АО', city: 'г. Биробиджан', street: 'Шолом-Алейхема'
+  region: 'Еврейская АОбл', city: 'г. Биробиджан', street: 'Шолом-Алейхема'
 )
 
 query.sanitized
-# => ....
+# => {
+#   :region=>["Еврейская", "автономная область", "Аобл", "Аобл"],
+#   :city=>["Биробиджан", "город", "г", "г."],
+#   :street=>["Шолом-Алейхема"]
+# }
 ```
 
-Allowed part keys are: `%w(region district city subcity street)`
+Allowed keys are: `%w(region district city subcity street)`
 
 ## Contributors
 
