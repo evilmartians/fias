@@ -8,7 +8,7 @@ module Fias
 
       def assumption
         find_candidates
-        #build_chains
+        build_chains
       end
 
       private
@@ -38,7 +38,9 @@ module Fias
         end
       end
 
-      def build_chains(variants)
+      def build_chains
+        puts @candidates.inspect
+        fail
         beginning = variants.values.first
         parents_by_id = variants.values.slice(1..-1).flatten.reverse.index_by(&:id)
 

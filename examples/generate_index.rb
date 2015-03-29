@@ -22,7 +22,7 @@ def alter_table
   DB.alter_table(ADDRESS_OBJECTS_TABLE_NAME) do
     add_column :tokens, 'text[]'
     add_column :ancestry, 'integer[]'
-    run 'CREATE INDEX idx_tokens on "address_objects" USING GIN ("tokens");'
+    DB.run 'CREATE INDEX idx_tokens on "address_objects" USING GIN ("tokens");'
   end
 end
 
