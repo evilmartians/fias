@@ -2,10 +2,14 @@ module Fias
   module Name
     module Synonyms
       class << self
-        def synonyms_and_optional(name)
+        def expand(name)
           tokens = Split.split(name)
           tokens.map! { |token| tokenize(name, token) }
           tokens.map { |token| Array.wrap(token) }
+        end
+
+        def forms(name)
+          recombine(expand(name))
         end
 
         private
@@ -62,6 +66,14 @@ module Fias
             end
 
           suffixes.flatten + [n]
+        end
+
+        def recombine(variants)
+          head, *rest = variants
+
+          forms = head.product(*rest)
+          forms.map! { |variant| variant.reject(&:blank?).sort.join(' ') }
+          forms.flatten
         end
 
         IN_BRACKETS      = /\((.*)\)/
