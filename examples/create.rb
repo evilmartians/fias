@@ -89,5 +89,20 @@ create_table
 copy_fias_data
 restore_hierarchy
 
-# Next, you can search & hide duplicates, calculate hierarchy for closure_tree
-# with http://github.com/gzigzigzeo/pg_closure_tree_rebuild, etc
+# Uncomment this migration if you want to use closure_tree for hierarchies:
+#
+# DB.create_table(:address_object_hierarchies) do
+#   primary_key :id
+#
+#   column :ancestory_id, Integer
+#   column :descendant_id, Integer
+#   column :generations, Integer
+#
+#   index [:ancestor_id, :descendant_id, :generations]
+#   index [:ancestor_id]
+#   index [:descendant_id]
+# end
+#
+# Use http://github.com/gzigzigzeo/pg_closure_tree_rebuild to fill it.
+#
+# Database ready!

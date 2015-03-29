@@ -8,7 +8,6 @@ module Fias
 
       def assumption
         find_possible_variants
-        reject_mismatched_names!
         build_chains
       end
 
@@ -26,15 +25,15 @@ module Fias
       end
 
       def reject_mismatched_names!(variants, name)
-        search_name_forms = Addressing::Tokenizer.name_forms(name)
+        search_name_forms = Fias::Name::Synonyms.forms(name)
 
         variants.reject! do |variant|
-          variant_forms = Addressing::Tokenizer.name_forms(variant.second)
+          variant_forms = Fias::Name::Synonyms.forms(variant[1])
           (search_name_forms & variant_forms).blank?
         end
       end
 
-      def build_possible_chains(variants)
+      def build_chains(variants)
         beginning = variants.values.first
         parents_by_id = variants.values.slice(1..-1).flatten.reverse.index_by(&:id)
 
