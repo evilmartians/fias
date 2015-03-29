@@ -207,7 +207,7 @@ Addressing::Name::Synonyms.forms('им. И.П.Павлова')
 
 #### Generating search index
 
-First of all you need to save splitted name for each record in your addressing table. See [indexing example](examples/generate_index.rb).
+First of all you need to save splitted name and ancestor ids for each record in your addressing table. See [indexing example](examples/generate_index.rb).
 
 ### Querying
 
@@ -226,9 +226,9 @@ query = Fias::Query.new(
 
 query.params.sanitized
 # => {
-#   :region=>["Еврейская", "автономная область", "Аобл", "Аобл"],
-#   :city=>["Биробиджан", "город", "г", "г."],
-#   :street=>["Шолом-Алейхема"]
+#   :region => ["Еврейская", "автономная область", "Аобл", "Аобл"],
+#   :city   => ["Биробиджан", "город", "г", "г."],
+#   :street => ["Шолом-Алейхема"]
 # }
 ```
 

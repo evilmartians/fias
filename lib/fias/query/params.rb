@@ -7,9 +7,9 @@ module Fias
         @params = params
         @params.assert_valid_keys(*VALID_KEYS)
 
-        extract_statuses
+        extract_names
         remove_duplicates
-        fix_federal_cities
+        move_federal_city_to_correct_place
         strip_house_number
       end
 
@@ -19,7 +19,7 @@ module Fias
 
       private
 
-      def extract_statuses
+      def extract_names
         extracted = @params.map do |name, value|
           if value.is_a?(Array)
             [name, value]
@@ -38,7 +38,7 @@ module Fias
         @sanitized.delete(:street) if street == district
       end
 
-      def fix_federal_cities
+      def move_federal_city_to_correct_place
         federal_city = find_federal_city
         return unless federal_city
 

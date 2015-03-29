@@ -2,7 +2,9 @@ module Fias
   module Query
     def initialize(params)
       @params = Params.new(params)
-      @finder = Finder.new(@params.sanitized, method(:find))
+      @finder = Finder.new(
+        @params.sanitized, method(:find), method(:ancestor_ids)
+      )
     end
 
     attr_reader :params
@@ -15,11 +17,6 @@ module Fias
 
     def find(_tokens)
       fail NotImplementedError
-#
-#          where.overlap(tokens: search_tokens).
-#          visible.
-#          pluck(*FIELDS)
-
     end
   end
 end

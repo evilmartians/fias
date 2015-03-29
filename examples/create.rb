@@ -92,8 +92,6 @@ restore_hierarchy
 # Uncomment this migration if you want to use closure_tree for hierarchies:
 #
 # DB.create_table(:address_object_hierarchies) do
-#   primary_key :id
-#
 #   column :ancestory_id, Integer
 #   column :descendant_id, Integer
 #   column :generations, Integer

@@ -1,35 +1,40 @@
 module Fias
   module Query
     class Finder
-      def initialize(params, finder)
+      def initialize(params, find)
         @params = params
-        @finder = finder
+        @find = find
       end
 
       def assumption
-        find_possible_variants
-        build_chains
+        find_candidates
+        #build_chains
       end
 
-      def find_possible_variants
-        result = @params.map do |key, (name, *_rest)|
-          tokens = Fias::Name::Split.split(name)
-          variants = find(tokens)
-          reject_mismatched_names!(variants, name)
-          variants.map! do |variant|
-            build_result_for(key, variant)
-          end
-          [key, variants]
-        end
-        Hash[result]
+      private
+
+      def find_candidates
+        @candidates = @params.map { |key, (name, *)| find_candidate(key, name) }
+        @candidates = Hash[candidates]
       end
 
-      def reject_mismatched_names!(variants, name)
-        search_name_forms = Fias::Name::Synonyms.forms(name)
+      def find_candidate(key, name)
+        words = Fias::Name::Split.split(name)
+        candidates = find(words)
+        candidates = reject_candidates(candidates, name)
+        [key, candidates]
+      end
 
-        variants.reject! do |variant|
-          variant_forms = Fias::Name::Synonyms.forms(variant[1])
-          (search_name_forms & variant_forms).blank?
+      def find(words)
+        @find.call(words)
+      end
+
+      def reject_candidates(candidates, name)
+        forms = Fias::Name::Synonyms.forms(name)
+
+        candidates.reject do |candidate|
+          candidate_forms = Fias::Name::Synonyms.forms(candidate[:name])
+          (forms & candidate_forms).blank?
         end
       end
 
@@ -47,7 +52,7 @@ module Fias
 
         chains.compact
       end
-
+=begin
       def build_result_for(kind, variant)
         id, name, status, ancestry, tokens = variant
         ancestry = split_ancestry(ancestry)
@@ -58,13 +63,9 @@ module Fias
       def split_ancestry(ancestry)
         ancestry.to_s.split('/').map(&:to_i).reverse
       end
-
-      def find(tokens)
-        @finder.call(tokens)
-      end
-
-      FIELDS = %i(id name status ancestry tokens)
-      Result = Struct.new(*FIELDS + [:kind])
+=end
+#      FIELDS = %i(id name status ancestry tokens)
+#      Result = Struct.new(*FIELDS + [:kind])
     end
   end
 end
