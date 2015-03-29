@@ -21,8 +21,12 @@ module Fias
 
       def extract_statuses
         extracted = @params.map do |name, value|
-          next if value.blank? || !value.is_a?(String)
-          [name, Fias::Name::Extract.extract(value)]
+          if value.is_a?(Array)
+            [name, value]
+          else
+            next if value.blank? || !value.is_a?(String)
+            [name, Fias::Name::Extract.extract(value)]
+          end
         end
 
         @sanitized = Hash[*extracted.compact.flatten(1)]
