@@ -58,6 +58,7 @@ require 'fias/name/split'
 require 'fias/name/synonyms'
 require 'fias/query'
 require 'fias/query/params'
+require 'fias/query/finder'
 require 'fias/railtie' if defined?(Rails)
 
 Fias.configure do |config|

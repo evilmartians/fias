@@ -11,7 +11,7 @@ describe Fias::Query::Params do
     end
   end
 
-  it 'must not resanitize already sanitized parts', focus: true do
+  it 'must not resanitize already sanitized parts' do
     sanitized = described_class.new(
       city: 'г Краснодар', street: 'Ушинского'
     ).sanitized
