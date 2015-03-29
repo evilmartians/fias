@@ -177,7 +177,7 @@ Addressing::Name::Split.split("Ю.Р.Г.Эрвье")
 
 #### Finding synonyms and optional words
 
-Given we have street name `им. академика И.П.Павлова` in FIAS. Most people will write it as just `Павлова`, some of them will write it as `имени Павлова`, some - `академика Павлова`. Noone except the machine will write exact name.
+Given we have street name `им. академика И.П.Павлова` in FIAS. Most people will write it as just `Павлова`, some of them will write it as `имени Павлова`, some - `академика Павлова`. No one except the machine will write exact name.
 
 ```ruby
 Addressing::Name::Synonyms.expand('им. академика И.П.Павлова')
@@ -188,7 +188,7 @@ Addressing::Name::Synonyms.expand('им. академика И.П.Павлова
 # ["павлова"]]
 ```
 
-Returns all possible forms for each word. Empty string marks optional word.
+Returns all possible forms for each word. Empty strings marks optional words.
 
 You can calculate all possible name combinations:
 
