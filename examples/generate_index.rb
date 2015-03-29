@@ -35,8 +35,10 @@ def tokenize
   scope.select(:id, :name).each do |row|
     bar.increment
 
+    tokens = Fias::Name::Split.split(row[:name])
+
     ADDRESS_OBJECTS.where(id: row[:id]).update(
-      tokens: Sequel.pg_array(Fias::Name::Split.split(row[:name]))
+      tokens: Sequel.pg_array(tokens, :text)
     )
   end
 end

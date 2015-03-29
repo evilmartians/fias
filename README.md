@@ -209,6 +209,10 @@ Addressing::Name::Synonyms.forms('им. И.П.Павлова')
 
 First of all you need to save splitted name for each record in your addressing table. See [indexing example](examples/generate_index.rb).
 
+### Quering
+
+
+
 ## Contributors
 
 * Victor Sokolov (@gzigzigzeo)
