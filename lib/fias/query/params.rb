@@ -14,9 +14,10 @@ module Fias
         sort
         extract_synonyms
         split_sanitized
+        fill_forms
       end
 
-      attr_reader :params, :sanitized, :synonyms, :split
+      attr_reader :params, :sanitized, :synonyms, :split, :forms
 
       KEYS.each { |key| define_method(key) { @sanitized[key] } }
 
@@ -87,6 +88,13 @@ module Fias
           [key, Fias::Name::Split.split(value.first)]
         end
         @split = Hash[@split]
+      end
+
+      def fill_forms
+        @forms = @sanitized.map do |key, value|
+          [key, Fias::Name::Synonyms.forms(value.first)]
+        end
+        @forms = Hash[@forms]
       end
     end
   end

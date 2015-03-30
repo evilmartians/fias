@@ -9,7 +9,7 @@ module Fias
       def estimate
         for_subject +
           for_found_parts +
-          for_status +
+          for_type +
           for_deepness +
           for_name_proximity
       end
@@ -25,7 +25,7 @@ module Fias
         @chain.size * RATES[:found_part]
       end
 
-      def for_status
+      def for_type
         @params.sanitized.sum do |key, (_, *expected_status)|
           received_status = chain_by_key[key].try(:[], :abbr)
 
@@ -33,15 +33,15 @@ module Fias
             expected_status.present? &&
             expected_status.include?(received_status)
 
-          status_found ? RATES[:status] : 0
+          status_found ? RATES[:type] : 0
         end
       end
 
-      def rate_for_deepness
+      def for_deepness
         @chain.first[:ancestry].size * RATES[:deep]
       end
 
-      def rate_for_name_proximity
+      def for_name_proximity
         @params.synonyms.sum do |key, (expected, _)|
           given = chain_by_key[key].try(:[], :tokens) || []
           expected = expected.flatten.uniq
@@ -58,7 +58,7 @@ module Fias
       RATES = {
         subject: 10000,   # It's most important to match street if street is requested
         found_part: 1000, # Than, maximum parts number should coincide
-        status: 100,      # Than, status should coincide,
+        type: 100,        # Than, status should coincide,
         name: 5,          # Than, how close name matches are
         deep: -1          # Than, how deep is matching chain situated
       }

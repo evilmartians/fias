@@ -17,7 +17,6 @@ module Fias
         @endpoints = @params.split.keys.map do |key|
           find_endpoint(key)
         end
-
         @endpoints = Hash[@endpoints]
         inject_key_to_endpoints
       end
@@ -34,7 +33,7 @@ module Fias
       end
 
       def reject_endpoints(endpoints, key)
-        forms = @params.synonyms[key]
+        forms = @params.forms[key]
 
         endpoints.reject do |endpoint|
           (forms & endpoint[:forms]).blank?

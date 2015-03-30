@@ -19,8 +19,15 @@ module Fias
     end
 
     def estimate(assumption)
-      chains = assumption.map { |chain| [rate(chain), chain.first] }
+      chains = estimate_chains(assumption)
       reject_invalid_chains(chains)
+    end
+
+    def estimate_chains(assumption)
+      assumption
+        .map { |chain| [rate(chain), chain.first] }
+        .sort_by(&:first)
+        .reverse
     end
 
     def reject_invalid_chains(chains)
