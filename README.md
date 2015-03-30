@@ -207,7 +207,7 @@ Addressing::Name::Synonyms.forms('им. И.П.Павлова')
 
 #### Generating search index
 
-Most importantly, you need to save the splitted name and ancestor ids for each record in your addressing table. See [indexing example](examples/generate_index.rb).
+Most importantly, you need to save the splitted name, ancestor ids and name forms for each record in your addressing table. See [indexing example](examples/generate_index.rb).
 
 ### Querying
 

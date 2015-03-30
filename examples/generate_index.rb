@@ -22,6 +22,7 @@ def alter_table
   DB.alter_table(ADDRESS_OBJECTS_TABLE_NAME) do
     add_column :tokens, 'text[]'
     add_column :ancestry, 'integer[]'
+    add_column :forms, 'text[]'
     DB.run 'CREATE INDEX idx_tokens on "address_objects" USING GIN ("tokens");'
   end
 end
@@ -46,14 +47,16 @@ def tokenize
     bar.increment
 
     tokens = Fias::Name::Split.split(row[:name])
+    forms = Fias::Name::Synonyms.forms(row[:name])
     ancestry = ancestry_for(row[:id])
 
     ADDRESS_OBJECTS.where(id: row[:id]).update(
       tokens: Sequel.pg_array(tokens, :text),
+      forms:  Sequel.pg_array(forms, :text),
       ancestry: Sequel.pg_array(ancestry, :integer)
     )
   end
 end
 
-#alter_table
+alter_table
 tokenize

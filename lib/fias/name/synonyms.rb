@@ -3,8 +3,8 @@ module Fias
     module Synonyms
       class << self
         def expand(name)
-          tokens = Split.split(name)
-          tokens
+          Split
+            .split(name)
             .map { |token| Array.wrap(tokenize(name, token)) }
         end
 

@@ -34,8 +34,7 @@ module Fias
         forms = Fias::Name::Synonyms.forms(name)
 
         endpoints.reject do |endpoint|
-          candidate_forms = Fias::Name::Synonyms.forms(endpoint[:name])
-          (forms & candidate_forms).blank?
+          (forms & endpoint[:forms]).blank?
         end
       end
 
