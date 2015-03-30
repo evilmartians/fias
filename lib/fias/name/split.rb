@@ -33,13 +33,10 @@ module Fias
 
         def split_initials(word)
           m_matches = word.match(Fias::INITIALS)
-          s_matches = word.match(Fias::SINGLE_INITIAL)
+          return m_matches.values_at(1, 3) if m_matches
 
-          if m_matches
-            m_matches.values_at(1, 3)
-          elsif s_matches
-            s_matches.values_at(2, 3)
-          end
+          s_matches = word.match(Fias::SINGLE_INITIAL)
+          return s_matches.values_at(2, 3) if s_matches
         end
 
         def split_all_dotwords(words)

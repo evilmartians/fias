@@ -46,7 +46,7 @@ module Fias
         @sanitized[:subcity] = city if city && city[0] != federal_city[0]
 
         if federal_city[1].blank?
-          federal_city = Fias::Name::Extract.extract("г #{federal_city.first}")
+          federal_city += Fias::Name::Canonical.canonical('г.')
         end
 
         @sanitized[:city] = federal_city

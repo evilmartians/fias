@@ -32,7 +32,7 @@ def ancestry_for(id)
     .join(:address_object_hierarchies, ancestor_id: :id)
     .where(address_object_hierarchies__descendant_id: id)
     .order(:address_object_hierarchies__generations)
-    .select_map(:id)
+    .select_map(:id) - [id]
 end
 
 def tokenize
@@ -55,5 +55,5 @@ def tokenize
   end
 end
 
-alter_table
+#alter_table
 tokenize

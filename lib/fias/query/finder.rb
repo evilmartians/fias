@@ -7,67 +7,67 @@ module Fias
       end
 
       def assumption
-        find_candidates
-        build_chains
+        find_endpoints
+        reject_inconsistent_chains
       end
 
       private
 
-      def find_candidates
-        @candidates = @params.map { |key, (name, *)| find_candidate(key, name) }
-        @candidates = Hash[candidates]
+      def find_endpoints
+        @endpoints = @params.map { |key, (name, *)| find_endpoint(key, name) }
+        @endpoints = Hash[@endpoints]
+        mark_endpoints_by_key
       end
 
-      def find_candidate(key, name)
+      def find_endpoint(key, name)
         words = Fias::Name::Split.split(name)
-        candidates = find(words)
-        candidates = reject_candidates(candidates, name)
-        [key, candidates]
+        endpoints = find(words)
+        endpoints = reject_endpoints(endpoints, name)
+        [key, endpoints]
       end
 
       def find(words)
         @find.call(words)
       end
 
-      def reject_candidates(candidates, name)
+      def reject_endpoints(endpoints, name)
         forms = Fias::Name::Synonyms.forms(name)
 
-        candidates.reject do |candidate|
-          candidate_forms = Fias::Name::Synonyms.forms(candidate[:name])
+        endpoints.reject do |endpoint|
+          candidate_forms = Fias::Name::Synonyms.forms(endpoint[:name])
           (forms & candidate_forms).blank?
         end
       end
 
-      def build_chains
-        puts @candidates.inspect
-        fail
-        beginning = variants.values.first
-        parents_by_id = variants.values.slice(1..-1).flatten.reverse.index_by(&:id)
+      def mark_endpoints_by_key
+        @endpoints.each do |key, endpoints|
+          endpoints.each { |endpoint| endpoint[:key] = key }
+        end
+      end
 
-        chains = beginning.map do |variant|
-          parent_ids_overlap = parents_by_id.keys & variant.ancestry
+      def reject_inconsistent_chains
+        starting_endpoints = @endpoints.values.first
+        parents = endpoints_parents
 
-          if parents_by_id.blank? || parent_ids_overlap.present?
-            [variant] + variant.ancestry.map { |id| parents_by_id[id] }.compact
+        chains = starting_endpoints.map do |endpoint|
+          overlaps = parents.keys & endpoint[:ancestry]
+
+          if parents.blank? || overlaps.present?
+            [endpoint] + endpoint[:ancestry].map { |id| parents[id] }.compact
           end
         end
 
         chains.compact
       end
-=begin
-      def build_result_for(kind, variant)
-        id, name, status, ancestry, tokens = variant
-        ancestry = split_ancestry(ancestry)
 
-        Result.new(id, name, status, ancestry, tokens, kind)
+      def endpoints_parents
+        @endpoints
+          .values
+          .slice(1..-1)
+          .flatten
+          .reverse
+          .index_by { |endpoint| endpoint[:id] }
       end
-
-      def split_ancestry(ancestry)
-        ancestry.to_s.split('/').map(&:to_i).reverse
-      end
-=end
-#      FIELDS = %i(id name status ancestry tokens)
-#      Result = Struct.new(*FIELDS + [:kind])
     end
   end
 end

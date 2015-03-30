@@ -35,4 +35,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'webmock'
   spec.add_development_dependency 'sqlite3'
   spec.add_development_dependency 'codeclimate-test-reporter'
+  spec.add_development_dependency 'ruby-prof'
 end

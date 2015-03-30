@@ -4,8 +4,8 @@ module Fias
       class << self
         def expand(name)
           tokens = Split.split(name)
-          tokens.map! { |token| tokenize(name, token) }
-          tokens.map { |token| Array.wrap(token) }
+          tokens
+            .map { |token| Array.wrap(tokenize(name, token)) }
         end
 
         def forms(name)
@@ -25,7 +25,7 @@ module Fias
         end
 
         def synonyms(token)
-          Fias.config.synonyms.find { |set| set.include?(token) }
+          Fias.config.synonyms_index[token]
         end
 
         def bracketed(name, token)
@@ -34,13 +34,12 @@ module Fias
         end
 
         def proper_names(token)
-          name = Fias.config.proper_names.find { |n| n == token }
-          [name, OPTIONAL] if name
+          [token, OPTIONAL] if Fias.config.proper_names.include?(token)
         end
 
         def initials(token)
           return unless
-            (token =~ Fias::INITIALS) && (token =~ Fias::SINGLE_INITIAL)
+            (Fias::INITIALS =~ token) && (Fias::SINGLE_INITIAL =~ token)
 
           [token, OPTIONAL]
         end
@@ -54,7 +53,8 @@ module Fias
         end
 
         def numerals(token)
-          numerals_for(token) if token =~ /^\d+/ && !(token =~ Fias::ANNIVESARIES)
+          return unless (/^\d+/ =~ token) || (Fias::ANNIVESARIES =~ token)
+          numerals_for(token)
         end
 
         def numerals_for(numeral)
@@ -72,8 +72,9 @@ module Fias
           head, *rest = variants
 
           forms = head.product(*rest)
-          forms.map! { |variant| variant.reject(&:blank?).sort.join(' ') }
-          forms.flatten
+          forms
+            .map { |variant| variant.reject(&:blank?).sort.join(' ') }
+            .flatten
         end
 
         IN_BRACKETS      = /\((.*)\)/

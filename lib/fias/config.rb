@@ -8,6 +8,7 @@ module Fias
       @exceptions = {}
       @proper_names = []
       @synonyms = []
+      @synonyms_index = {}
 
       yield(self)
 
@@ -15,7 +16,7 @@ module Fias
     end
 
     attr_reader :index, :longs, :shorts, :aliases, :exceptions
-    attr_reader :proper_names, :synonyms
+    attr_reader :proper_names, :synonyms, :synonyms_index
 
     def add_name(long, short, aliases = [])
       @longs[Unicode.downcase(short)] = long
@@ -36,6 +37,7 @@ module Fias
 
     def add_synonym(*names)
       @synonyms << names
+      populate_synonyms_index(names)
     end
 
     private
@@ -63,6 +65,10 @@ module Fias
     def finalize_index
       @index = @index.sort_by { |key, _| key.size }.reverse
       @index = Hash[*@index.flatten]
+    end
+
+    def populate_synonyms_index(names)
+      names.each { |name| @synonyms_index[name] = names }
     end
   end
 end
