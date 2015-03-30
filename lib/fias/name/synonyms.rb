@@ -69,6 +69,7 @@ module Fias
         end
 
         def recombine(variants)
+          return variants if variants.empty?
           head, *rest = variants
 
           forms = head.product(*rest)
