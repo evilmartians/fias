@@ -12,9 +12,10 @@ module Fias
         move_federal_city_to_correct_place
         strip_house_number
         sort
+        extract_synonyms
       end
 
-      attr_reader :params, :sanitized
+      attr_reader :params, :sanitized, :synonyms
 
       KEYS.each { |key| define_method(key) { @sanitized[key] } }
 
@@ -71,6 +72,12 @@ module Fias
           [key, value] if value.present?
         end
         @sanitized = Hash[sanitized.compact]
+      end
+
+      def extract_synonyms
+        @synonyms = @sanitized.map do |key, value|
+          [key, Fias::Name::Synonyms.expand(value.first)]
+        end
       end
     end
   end

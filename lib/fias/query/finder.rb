@@ -16,7 +16,7 @@ module Fias
       def find_endpoints
         @endpoints = @params.map { |key, (name, *)| find_endpoint(key, name) }
         @endpoints = Hash[@endpoints]
-        mark_endpoints_by_key
+        inject_key_to_endpoints
       end
 
       def find_endpoint(key, name)
@@ -38,7 +38,7 @@ module Fias
         end
       end
 
-      def mark_endpoints_by_key
+      def inject_key_to_endpoints
         @endpoints.each do |key, endpoints|
           endpoints.each { |endpoint| endpoint[:key] = key }
         end
