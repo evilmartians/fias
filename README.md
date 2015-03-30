@@ -207,7 +207,12 @@ Addressing::Name::Synonyms.forms('им. И.П.Павлова')
 
 #### Generating search index
 
-Most importantly, you need to save the splitted name, ancestor ids and name forms for each record in your addressing table. See [indexing example](examples/generate_index.rb).
+In search index you need:
+* splitted name (result of Fias::Name::Split.split)
+* name forms (result of Fias::Name::Synonyms.forms)
+* ancestor ids
+
+See [indexing example](examples/generate_index.rb).
 
 ### Querying
 
@@ -215,12 +220,23 @@ Performing a search will execute these three steps:
 
 1. Preparation: sanitizing request values, splitting toponym name and type, etc.
 2. Querying: finding possible candidates in addressing object tree.
-3. Decision: determining the most suitable result.
-
-#### Preparation
+3. Decision: determining the most suitable result depending on similarity with request.
 
 ```ruby
-query = Fias::Query.new(
+class Query
+  include Fias::Query
+
+  def find(tokens)
+    op = Sequel.pg_array_op(:tokens)
+
+    ADDRESS_OBJECTS
+      .select(:id, :name, :abbr, :parent_id, :ancestry, :forms, :tokens)
+      .where(op.overlaps(tokens))
+      .to_a
+  end
+end
+
+query = Query.new(
   region: 'Еврейская АОбл', city: 'г. Биробиджан', street: 'Шолом-Алейхема'
 )
 
@@ -230,9 +246,14 @@ query.params.sanitized
 #   :city   => ["Биробиджан", "город", "г", "г."],
 #   :street => ["Шолом-Алейхема"]
 # }
+
+query.perform
+#
+# [[13213, {:id=>72344, :name=>"Шолом-Алейхема", :abbr=>"ул", :parent_id=>184027, :ancestry=>[184027, 12550], :forms=>["шолом-
+# алейхема"], :tokens=>["шолом-алейхема"], :key=>:street}]]
 ```
 
-Allowed keys are: `%i(region district city subcity street)`
+Allowed params are: `%i(region district city subcity street)`
 
 ## Contributors
 
