@@ -14,15 +14,18 @@ module Fias
       private
 
       def find_endpoints
-        @endpoints = @params.map { |key, (name, *)| find_endpoint(key, name) }
+        @endpoints = @params.split.keys.map do |key|
+          find_endpoint(key)
+        end
+
         @endpoints = Hash[@endpoints]
         inject_key_to_endpoints
       end
 
-      def find_endpoint(key, name)
-        words = Fias::Name::Split.split(name)
+      def find_endpoint(key)
+        words = @params.split[key]
         endpoints = find(words)
-        endpoints = reject_endpoints(endpoints, name)
+        endpoints = reject_endpoints(endpoints, key)
         [key, endpoints]
       end
 
@@ -30,8 +33,8 @@ module Fias
         @find.call(words)
       end
 
-      def reject_endpoints(endpoints, name)
-        forms = Fias::Name::Synonyms.forms(name)
+      def reject_endpoints(endpoints, key)
+        forms = @params.synonyms[key]
 
         endpoints.reject do |endpoint|
           (forms & endpoint[:forms]).blank?

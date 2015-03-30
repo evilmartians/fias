@@ -2,7 +2,7 @@ module Fias
   module Query
     def initialize(params)
       @params = Params.new(params)
-      @finder = Finder.new(@params.sanitized, method(:find))
+      @finder = Finder.new(@params, method(:find))
     end
 
     attr_reader :params

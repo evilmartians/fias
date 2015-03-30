@@ -13,9 +13,10 @@ module Fias
         strip_house_number
         sort
         extract_synonyms
+        split_sanitized
       end
 
-      attr_reader :params, :sanitized, :synonyms
+      attr_reader :params, :sanitized, :synonyms, :split
 
       KEYS.each { |key| define_method(key) { @sanitized[key] } }
 
@@ -78,6 +79,14 @@ module Fias
         @synonyms = @sanitized.map do |key, value|
           [key, Fias::Name::Synonyms.expand(value.first)]
         end
+        @synonyms = Hash[@synonyms]
+      end
+
+      def split_sanitized
+        @split = @sanitized.map do |key, value|
+          [key, Fias::Name::Split.split(value.first)]
+        end
+        @split = Hash[@split]
       end
     end
   end
