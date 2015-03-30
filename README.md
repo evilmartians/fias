@@ -208,8 +208,8 @@ Addressing::Name::Synonyms.forms('им. И.П.Павлова')
 #### Generating search index
 
 In search index you need:
-* splitted name (result of Fias::Name::Split.split)
-* name forms (result of Fias::Name::Synonyms.forms)
+* splitted name (result of `Fias::Name::Split.split`)
+* name forms (result of `Fias::Name::Synonyms.forms`)
 * ancestor ids
 
 See [indexing example](examples/generate_index.rb).
@@ -222,20 +222,37 @@ Performing a search will execute these three steps:
 2. Querying: finding possible candidates in addressing object tree.
 3. Decision: determining the most suitable result depending on similarity with request.
 
+#### Defining in-app query class
+
 ```ruby
 class Query
   include Fias::Query
 
   def find(tokens)
+    return [] if tokens.blank? # Empty array has no type, Sequel fails.
+
     op = Sequel.pg_array_op(:tokens)
 
-    ADDRESS_OBJECTS
+    DB[:address_objects]
       .select(:id, :name, :abbr, :parent_id, :ancestry, :forms, :tokens)
       .where(op.overlaps(tokens))
       .to_a
   end
 end
+```
 
+`#find` accepts splitted object name (`Fias::Name::Split.split` result). It must search all address objects overlapping their tokens with given. It must return array of hashes with keys you see above.
+
+* `:abbr` - FIAS shortname value.
+* `:ancestry` - array of ancestor ids.
+* `:forms` - object name forms (`Fias::Name::Synonyms.forms`)
+* `:tokens` - splitted object name (`Fias::Name::Synonyms.split`)
+
+See [indexing example](examples/generate_index.rb).
+
+#### Query params
+
+```ruby
 query = Query.new(
   region: 'Еврейская АОбл', city: 'г. Биробиджан', street: 'Шолом-Алейхема'
 )
@@ -246,14 +263,24 @@ query.params.sanitized
 #   :city   => ["Биробиджан", "город", "г", "г."],
 #   :street => ["Шолом-Алейхема"]
 # }
+```
 
+Allowed params are: `%i(region district city subcity street)`
+
+#### Result
+
+```ruby
 query.perform
 #
 # [[13213, {:id=>72344, :name=>"Шолом-Алейхема", :abbr=>"ул", :parent_id=>184027, :ancestry=>[184027, 12550], :forms=>["шолом-
 # алейхема"], :tokens=>["шолом-алейхема"], :key=>:street}]]
 ```
 
-Allowed params are: `%i(region district city subcity street)`
+Result is array.
+
+* Each element of array contains two values: factor of equality and found object.
+* If there are more then one row in array it means that query results are ambigous. All elements will have same factors.
+* If there are no items - nothing found.
 
 ## Contributors
 
