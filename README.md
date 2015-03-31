@@ -230,7 +230,9 @@ Performing a search will execute these three steps:
 2. Querying: finding possible candidates in addressing object tree.
 3. Decision: determining the most suitable result depending on similarity with request.
 
-#### Defining in-app query class
+#### Defining an in-app query class
+
+We'll use the `sequel` gem in this example.
 
 ```ruby
 class Query
@@ -249,10 +251,10 @@ class Query
 end
 ```
 
-`#find` accepts splitted object name (`Fias::Name::Split.split` result). It must search all address objects overlapping their tokens with given. It must return array of hashes with keys you see above.
+`#find` accepts splitted object name (a result of `Fias::Name::Split.split`). It searches all address objects with their tokens matching a given set of tokens. It returns an array of hashes with keys you can see above.
 
 * `:abbr` - FIAS shortname value.
-* `:ancestry` - array of ancestor ids.
+* `:ancestry` - array of ancestor IDs.
 * `:forms` - object name forms (`Fias::Name::Synonyms.forms`)
 * `:tokens` - object name tokens (`Fias::Name::Synonyms.tokens`)
 
