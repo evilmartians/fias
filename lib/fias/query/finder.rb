@@ -8,6 +8,7 @@ module Fias
 
       def assumption
         find_endpoints
+        return [] if @endpoints.blank?
         reject_inconsistent_chains
       end
 
