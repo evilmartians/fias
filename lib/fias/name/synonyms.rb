@@ -8,6 +8,10 @@ module Fias
             .map { |token| Array.wrap(tokenize(name, token)) }
         end
 
+        def tokens(name)
+          expand(name).flatten.uniq
+        end
+
         def forms(name)
           recombine(expand(name))
         end

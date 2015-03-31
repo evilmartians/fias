@@ -1,0 +1,79 @@
+- # exact mapping
+  -
+    region: Оренбургская область
+    district: Майкопский район
+    city: город Майкоп
+    street: ул. Декабристов
+  - [0]
+
+- # lot of equal variants
+  -
+    region: Оренбургская область
+    district: Майкопский район
+    street: Декабристов
+  - [0, 1, 2, 3]
+
+- # must look up most superficial address
+  -
+    street: Солнечная
+    city: Балашиха
+    district: Балашихинский район
+    region: Московская область
+
+  - [7]
+
+- # must lookup most conforming street even if it present in subcity
+  -
+    street: Новая
+    city: Москва
+  - [12]
+
+- # must lookup street even it present in multiple cities
+  -
+    street: Неизвестная
+    city: Липецк
+  - [15]
+
+- # must lookup street by alias
+  -
+    city: Москва
+    street: ул. Текстильщиков 14-я
+
+  - [16]
+
+- # must lookup vasilievsky lines
+  -
+    city: Санкт-Петербург
+    street: 14 линия
+  - [18]
+
+- # must lookup v.o
+  -
+    city: Санкт-Петербург
+    street: Большой В.О. пр.
+  - [20]
+
+- # must lookup bolshoy
+  -
+    city: Санкт-Петербург
+    street: Большой пр
+  - [20, 21]
+
+- # must look up single city in Russia
+  -
+    city: Лебяжье
+  - [22]
+
+- # must look up subcity
+  -
+    city: Москва
+    subcity: Кокошкино
+  -
+    [23]
+
+- # must look up subcity even federal city given as region
+  -
+    region: Москва
+    city: Кокошкино
+  -
+    [23]

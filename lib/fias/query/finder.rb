@@ -62,9 +62,9 @@ module Fias
       end
 
       def endpoints_parents
-        @endpoints
-          .values
-          .slice(1..-1)
+        parents = @endpoints.values.slice(1..-1)
+        return [] if parents.nil?
+        parents
           .flatten
           .reverse
           .index_by { |endpoint| endpoint[:id] }

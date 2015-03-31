@@ -46,7 +46,7 @@ def tokenize
   scope.select(:id, :name).each do |row|
     bar.increment
 
-    tokens = Fias::Name::Split.split(row[:name])
+    tokens = Fias::Name::Synonyms.tokens(row[:name])
     forms = Fias::Name::Synonyms.forms(row[:name])
     ancestry = ancestry_for(row[:id])
 

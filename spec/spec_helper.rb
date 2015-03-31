@@ -17,6 +17,7 @@ end
 
 require 'fias'
 require 'spec/support/query'
+require 'spec/support/db'
 
 WebMock.disable_net_connect!(allow: %w(codeclimate.com))
 

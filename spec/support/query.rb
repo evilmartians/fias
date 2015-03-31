@@ -6,6 +6,8 @@ class TestQuery
   include Fias::Query
 
   def find(tokens)
-    super
+    return [] if tokens.empty?
+
+    find_in_addressing_db(tokens)
   end
 end

@@ -189,6 +189,14 @@ Addressing::Name::Synonyms.expand('им. академика И.П.Павлова
 
 Will return all possible forms for each word. Empty strings here mark optional words.
 
+```ruby
+Addressing::Name::Synonyms.tokens('им. академика И.П.Павлова')
+
+# => ["им", "имени", "им.", "ак.", "академика", "и.п.", "павлова"]
+```
+
+Will return array with all possible words.
+
 You can also calculate all possible name combinations:
 
 ```ruby
@@ -208,7 +216,7 @@ Addressing::Name::Synonyms.forms('им. И.П.Павлова')
 #### Generating search index
 
 In search index you need:
-* splitted name (result of `Fias::Name::Split.split`)
+* name tokens (result of `Fias::Name::Synonyms.tokens`)
 * name forms (result of `Fias::Name::Synonyms.forms`)
 * ancestor ids
 
@@ -246,7 +254,7 @@ end
 * `:abbr` - FIAS shortname value.
 * `:ancestry` - array of ancestor ids.
 * `:forms` - object name forms (`Fias::Name::Synonyms.forms`)
-* `:tokens` - splitted object name (`Fias::Name::Synonyms.split`)
+* `:tokens` - object name tokens (`Fias::Name::Synonyms.tokens`)
 
 See [indexing example](examples/generate_index.rb).
 
@@ -280,7 +288,7 @@ Result is array.
 
 * Each element of array contains two values: factor of equality and found object.
 * If there are more then one row in array it means that query results are ambigous. All elements will have same factors.
-* If there are no items - nothing found.
+* Nothing found if empty.
 
 ## Contributors
 
