@@ -288,12 +288,12 @@ Result is array.
 * If there are more then one row in array it means that query results are ambigous. All elements will have same factors.
 * Array is empty if nothing found.
 
-#### Notes
+## Notes
 
-1. People make mistakes. Search requests can have mistakes. Our goal is to minimize mistake's impact. Everything above (name forms, synonyms, etc.) is made to better understand humans.
+1. People make mistakes. Search requests can have mistakes. Our goal is to minimize mistake's impact. Everything above (name forms, synonyms, etc.) is made to better understand humans. Over 50K of different real addresses written by humans was used to collect type of mistakes an deduce that rules.
 2. That's why requests are slow.
-3. In real applications there could be a lot of similar queries. It's okay to cache request results in database to prevent repeated queries.
-4. In many cases human can resolve ambigous results or try to find not found manually. It could be wise to have some kind of admin interface in your app to do that.
+3. In real applications there could be a lot of similar queries. It's okay to cache request results in database to prevent repeated queries. Cached items do not need TTL because FIAS changes rarely.
+4. In many cases human can resolve ambigous results or try to find result manually. It could be wise to have some kind of admin interface in your app to do that.
 
 ## Contributors
 
