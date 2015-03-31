@@ -23,8 +23,9 @@ def alter_table
     add_column :tokens, 'text[]'
     add_column :ancestry, 'integer[]'
     add_column :forms, 'text[]'
-    DB.run 'CREATE INDEX idx_tokens on "address_objects" USING GIN ("tokens");'
   end
+
+  DB.run 'CREATE INDEX idx_tokens on "address_objects" USING GIN ("tokens");'
 end
 
 def ancestry_for(id)

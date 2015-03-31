@@ -256,8 +256,6 @@ end
 * `:forms` - object name forms (`Fias::Name::Synonyms.forms`)
 * `:tokens` - object name tokens (`Fias::Name::Synonyms.tokens`)
 
-See [indexing example](examples/generate_index.rb).
-
 #### Query params
 
 ```ruby
@@ -288,7 +286,14 @@ Result is array.
 
 * Each element of array contains two values: factor of equality and found object.
 * If there are more then one row in array it means that query results are ambigous. All elements will have same factors.
-* Nothing found if empty.
+* Array is empty if nothing found.
+
+#### Notes
+
+1. People make mistakes. Search requests can have mistakes. Our goal is to minimize mistake's impact. Everything above (name forms, synonyms, etc.) is made to better understand humans.
+2. That's why requests are slow.
+3. In real applications there could be a lot of similar queries. It's okay to cache request results in database to prevent repeated queries.
+4. In many cases human can resolve ambigous results or try to find not found manually. It could be wise to have some kind of admin interface in your app to do that.
 
 ## Contributors
 

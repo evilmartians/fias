@@ -27,7 +27,7 @@ ADDRESS_OBJECTS = DB[ADDRESS_OBJECTS_TABLE_NAME]
 def create_table
   puts 'Creating target table...'
 
-  DB.create_table!(ADDRESS_OBJECTS_TABLE_NAME) do
+  DB.create_table(ADDRESS_OBJECTS_TABLE_NAME) do
     primary_key :id
 
     column :aoid, :uuid
@@ -92,10 +92,10 @@ restore_hierarchy
 # Uncomment this migration if you want to use closure_tree for hierarchies:
 #
 # DB.create_table(:address_object_hierarchies) do
-#   column :ancestory_id, Integer
+#   column :ancestor_id, Integer
 #   column :descendant_id, Integer
 #   column :generations, Integer
-#
+
 #   index [:ancestor_id, :descendant_id, :generations]
 #   index [:ancestor_id]
 #   index [:descendant_id]
