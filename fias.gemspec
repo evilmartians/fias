@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['gzigzigzeo@evilmartians.com']
   spec.summary       = %q{Imports Russian FIAS database into SQL}
   spec.description   = %q{Imports Russian FIAS database into SQL (for Ruby on Rails on PostgreSQL projects)}
-  spec.homepage      = 'shttp://github.com/evilmartians/fias'
+  spec.homepage      = 'http://github.com/evilmartians/fias'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0")
