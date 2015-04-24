@@ -77,24 +77,23 @@ module Fias
       end
 
       def extract_synonyms
-        @synonyms = @sanitized.map do |key, value|
-          [key, Fias::Name::Synonyms.expand(value.first)]
-        end
-        @synonyms = Hash[@synonyms]
+        @synonyms = map_sanitized { |value| Fias::Name::Synonyms.expand(value) }
       end
 
       def split_sanitized
-        @split = @sanitized.map do |key, value|
-          [key, Fias::Name::Split.split(value.first)]
-        end
-        @split = Hash[@split]
+        @split = map_sanitized { |value| Fias::Name::Split.split(value) }
       end
 
       def fill_forms
-        @forms = @sanitized.map do |key, value|
-          [key, Fias::Name::Synonyms.forms(value.first)]
+        @forms = map_sanitized { |value| Fias::Name::Synonyms.forms(value) }
+      end
+
+      def map_sanitized(&block)
+        mapped = @sanitized.map do |key, value|
+          [key, yield(value.first)]
         end
-        @forms = Hash[@forms]
+
+        Hash[mapped]
       end
     end
   end
