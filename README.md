@@ -14,6 +14,8 @@ Designed for usage with Ruby on Rails and a PostgreSQL backend.
 
 Think twice before you decide to use a standalone copy of FIAS database in your project. [КЛАДР в облаке](https://kladr-api.ru/) could also be a solution.
 
+![Мухосраново](http://i.imgur.com/JCwgqjL.jpg) ![Марс](http://i.imgur.com/j8WPtOI.jpg)
+
 ## Installation
 
 Add this line to your application's `Gemfile`:
