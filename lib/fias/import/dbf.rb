@@ -68,7 +68,8 @@ module Fias
         structure_statuses: 'STRSTAT.DBF',
         address_objects: 'ADDROBJ.DBF',
         house_intervals: 'HOUSEINT.DBF',
-        landmarks: 'LANDMARK.DBF'
+        landmarks: 'LANDMARK.DBF',
+        house_state_statuses: 'HSTSTAT.DBF'
       }.merge(
         HOUSE_TABLES
       ).merge(
