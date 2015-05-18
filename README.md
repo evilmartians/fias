@@ -39,6 +39,10 @@ Or install it yourself:
     $ unrar e fias_dbf.rar
     $ bundle exec rake fias:create_tables fias:import DATABASE_URL=postgres://localhost/fias
 
+If you get an error "Errno::EMFILE: Too many open files @ rb_sysopen" please set ulimit 512 or more before starting rake tasks:
+
+    ulimit -S -n 512
+
 The rake task accepts options through ENV variables:
 
 * `TABLES` to specify a comma-separated list of tables to import or create. See `Fias::Import::Dbf::TABLES` for the list of key names. Use `houses` as an alias for HOUSE* tables and `nordocs` for NORDOC* tables. In most cases you'll need only the  `address_objects` table.
