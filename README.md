@@ -47,7 +47,7 @@ The rake task accepts options through ENV variables:
 
 * `TABLES` to specify a comma-separated list of tables to import or create. See `Fias::Import::Dbf::TABLES` for the list of key names. Use `houses` as an alias for HOUSE* tables and `nordocs` for NORDOC* tables. In most cases you'll need only the  `address_objects` table.
 * `PREFIX` for database tables prefix ('fias_' by default).
-* `PATH` to specify DBF files location ('tmp/fias' by default).
+* `FIAS_PATH` to specify DBF files location ('tmp/fias' by default).
 * `DATABASE_URL` to set database credentials (required explicitly even with a Ruby on Rails project).
 
 This gem uses `COPY FROM STDIN BINARY` to import data. At the moment it works with PostgreSQL only.
