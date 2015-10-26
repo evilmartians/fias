@@ -2,34 +2,11 @@ module Fias
   module Import
     module DownloadService
       def url
-        response = HTTParty.post(
-          'http://fias.nalog.ru/WebServices/Public/DownloadService.asmx',
-          OPTIONS
-        )
-
-        matches =
-          response.body.match(/<FiasCompleteDbfUrl>(.*)<\/FiasCompleteDbfUrl>/)
-
-        matches[1] if matches
+        client = Savon.client(wsdl: 'http://fias.nalog.ru/WebServices/Public/DownloadService.asmx?WSDL')
+        info = client.call(:get_last_download_file_info)
+                   .to_hash[:get_last_download_file_info_response][:get_last_download_file_info_result]
+        info[:fias_complete_dbf_url]
       end
-
-      OPTIONS = {
-        body: %(<?xml version="1.0" encoding="utf-8"?>
-<soap:Envelope
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-<soap:Body>
-<GetLastDownloadFileInfo
-  xmlns="http://fias.nalog.ru/WebServices/Public/DownloadService.asmx/" />
-</soap:Body>
-</soap:Envelope>
-),
-        headers: {
-          'SOAPAction' => 'http://fias.nalog.ru/WebServices/Public/DownloadService.asmx/GetLastDownloadFileInfo',
-          'Content-Type' => 'text/xml; encoding=utf-8'
-        }
-      }
 
       module_function :url
     end
