@@ -8,6 +8,9 @@ module Fias
           exception = Fias.config.exceptions[Unicode.downcase(name)]
           return exception.reverse if exception
 
+          replacement = Fias.config.replacements[Unicode.downcase(name)]
+          return replacement if replacement
+
           [concat(short, name), concat(long, name)]
         end
 
