@@ -7,6 +7,7 @@ module Fias
         @db = db
         @table_name = table_name.to_sym
         @dbf = dbf
+        @allowed_columns = Fias.config.get_allowed_columns(@table_name)
         @encoder = PgDataEncoder::EncodeForCopy.new(
           column_types: map_types(types)
         )
@@ -14,7 +15,14 @@ module Fias
 
       def encode
         @dbf.each do |record|
-          line = record.to_a.map { |v| v == '' ? nil : v }
+          if @allowed_columns
+            line = []
+            @allowed_columns.each do |column|
+              line.push(record[column] == '' ? nil : record[column])
+            end
+          else
+            line = record.to_a.map { |v| v == '' ? nil : v }
+          end
           @encoder.add(line)
           yield if block_given?
         end
@@ -37,6 +45,7 @@ module Fias
 
       def columns
         @columns ||= @dbf.columns.map(&:name).map(&:downcase).map(&:to_sym)
+        @allowed_columns.any? ? @columns && @allowed_columns : @columns
       end
 
       def prepare
@@ -46,7 +55,6 @@ module Fias
 
       def copy_into
         io = @encoder.get_io
-
         @db.copy_into(@table_name.to_sym, columns: columns, format: :binary) do
           begin
             io.readpartial(BLOCK_SIZE)

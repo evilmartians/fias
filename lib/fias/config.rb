@@ -10,6 +10,7 @@ module Fias
       @replacements = {}
       @synonyms = []
       @synonyms_index = {}
+      @import_sets = {}
 
       yield(self)
 
@@ -17,7 +18,7 @@ module Fias
     end
 
     attr_reader :index, :longs, :shorts, :aliases, :exceptions, :replacements
-    attr_reader :proper_names, :synonyms, :synonyms_index
+    attr_reader :proper_names, :synonyms, :synonyms_index, :import_sets
 
     def add_name(long, short, aliases = [])
       @longs[Unicode.downcase(short)] = long
@@ -43,6 +44,15 @@ module Fias
     def add_synonym(*names)
       @synonyms << names
       populate_synonyms_index(names)
+    end
+
+    def add_allowed_columns_set(value)
+      @import_sets = value
+    end
+
+    def get_allowed_columns(table)
+      table = table.downcase.to_sym unless table.class == Symbol
+      @import_sets[table] || []
     end
 
     private
