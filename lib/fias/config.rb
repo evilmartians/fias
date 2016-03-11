@@ -7,6 +7,7 @@ module Fias
       @aliases = {}
       @exceptions = {}
       @proper_names = []
+      @replacements = {}
       @synonyms = []
       @synonyms_index = {}
 
@@ -15,7 +16,7 @@ module Fias
       finalize_index
     end
 
-    attr_reader :index, :longs, :shorts, :aliases, :exceptions
+    attr_reader :index, :longs, :shorts, :aliases, :exceptions, :replacements
     attr_reader :proper_names, :synonyms, :synonyms_index
 
     def add_name(long, short, aliases = [])
@@ -24,6 +25,10 @@ module Fias
       @aliases[Unicode.downcase(long)] = aliases
 
       populate_index(long, short, aliases)
+    end
+
+    def add_replacement(target, value)
+      @replacements[Unicode.downcase(target)] = value
     end
 
     def add_exception(long, short)
