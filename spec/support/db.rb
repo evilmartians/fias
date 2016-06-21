@@ -2,7 +2,7 @@ DB = {}
 SHORTCUTS = {}
 
 YAML.load_file('spec/fixtures/addressing.yml').each.with_index do |item, index|
-  ancestry = item.inject([]) do |ancestry, element|
+  parentage = item.inject([]) do |parentage, element|
     name = element.last
     name, _, abbr, _ = Fias::Name::Extract.extract(name)
     tokens = Fias::Name::Synonyms.tokens(name)
@@ -11,18 +11,18 @@ YAML.load_file('spec/fixtures/addressing.yml').each.with_index do |item, index|
 
     DB[id] = {
       id: id,
-      parent_id: ancestry.last,
+      parent_id: parentage.last,
       name: name,
       abbr: abbr,
-      ancestry: ancestry.reverse,
+      parentage: parentage.reverse,
       tokens: tokens,
       forms: forms
     }
 
-    ancestry + [id]
+    parentage + [id]
   end
 
-  SHORTCUTS[index] = DB[ancestry.last]
+  SHORTCUTS[index] = DB[parentage.last]
 end
 
 def find_in_addressing_db(tokens)

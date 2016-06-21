@@ -38,7 +38,7 @@ module Fias
       end
 
       def for_deepness
-        @chain.first[:ancestry].size * RATES[:deep]
+        parentage(@chain.first).size * RATES[:deep]
       end
 
       def for_name_proximity
@@ -53,6 +53,10 @@ module Fias
 
       def chain_by_key
         @chain_by_key ||= @chain.index_by { |item| item[:key] }
+      end
+
+      def parentage(chain)
+        chain[Fias.setting(:parentage_column).to_sym]
       end
 
       RATES = {

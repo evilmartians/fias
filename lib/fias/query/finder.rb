@@ -52,10 +52,10 @@ module Fias
         parents = endpoints_parents
 
         chains = starting_endpoints.map do |endpoint|
-          overlaps = parents.keys & endpoint[:ancestry]
+          overlaps = parents.keys & parentage(endpoint)
 
           if parents.blank? || overlaps.present?
-            [endpoint] + endpoint[:ancestry].map { |id| parents[id] }.compact
+            [endpoint] + parentage(endpoint).map { |id| parents[id] }.compact
           end
         end
 
@@ -69,6 +69,18 @@ module Fias
           .flatten
           .reverse
           .index_by { |endpoint| endpoint[:id] }
+      end
+
+      def parentage(endpoint)
+        endpoint[Fias.setting(:parentage_column).to_sym].tap do |parentage|
+          warn(<<-DEPRECATE) unless parentage.is_a? Array
+            Now `ancestry` column was renamed to `parentage` for possibility of using Ancestry gem.
+            Please, add setting `parentage_column` in your app, if you want to continue use `ancestry` column.
+            ```
+              Fias.config.add_setting(:parentage_column, :ancestry)
+            ```
+          DEPRECATE
+        end
       end
     end
   end
