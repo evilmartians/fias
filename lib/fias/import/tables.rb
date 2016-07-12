@@ -1,10 +1,10 @@
 module Fias
   module Import
     class Tables
-      def initialize(db, files, *prefix)
+      def initialize(db, files, prefix = DEFAULT_PREFIX)
         @db = db
         @files = files
-        @prefix = prefix.first || DEFAULT_PREFIX
+        @prefix = prefix
       end
 
       attr_reader :files

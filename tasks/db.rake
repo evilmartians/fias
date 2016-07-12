@@ -43,7 +43,7 @@ namespace :fias do
     only = *ENV['TABLES'].to_s.split(',')
     files = Fias::Import::Dbf.new(fias_path).only(*only)
     prefix = ENV['PREFIX']
-    tables = Fias::Import::Tables.new(db, files, prefix)
+    tables = Fias::Import::Tables.new(db, files, *[prefix].compact)
 
     diff = only - files.keys.map(&:to_s)
     puts "WARNING: Missing DBF files for: #{diff.join(', ')}" if diff.any?
