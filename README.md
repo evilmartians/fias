@@ -34,6 +34,8 @@ Or install it yourself:
 
 ## Import into PostgreSQL
 
+**Warning!** You should not run the import in a 32-bit operating system, because you're likely to get a Memory Limit exception
+
     $ mkdir -p tmp/fias && cd tmp/fias
     $ bundle exec rake fias:download | xargs wget
     $ unrar e fias_dbf.rar
