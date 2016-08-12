@@ -56,6 +56,8 @@ module Fias
 
       HOUSE_TABLES = n_tables('house')
       NORDOC_TABLES = n_tables('nordoc')
+      ROOM_TABLES = n_tables('room')
+      STEAD_TABLES = n_tables('stead')
 
       TABLES = {
         address_object_types: 'SOCRBASE.DBF',
@@ -69,11 +71,16 @@ module Fias
         address_objects: 'ADDROBJ.DBF',
         house_intervals: 'HOUSEINT.DBF',
         landmarks: 'LANDMARK.DBF',
-        house_state_statuses: 'HSTSTAT.DBF'
+        house_state_statuses: 'HSTSTAT.DBF',
+        norm_doc_types: 'NDOCTYPE.DBF'
       }.merge(
         HOUSE_TABLES
       ).merge(
         NORDOC_TABLES
+      ).merge(
+         ROOM_TABLES
+      ).merge(
+         STEAD_TABLES
       )
 
       DEFAULT_ENCODING = Encoding::CP866
