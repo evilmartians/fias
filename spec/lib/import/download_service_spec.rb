@@ -1,15 +1,24 @@
 require 'spec_helper'
+require "savon/mock/spec_helper"
 
 describe Fias::Import::DownloadService do
+  include Savon::SpecHelper
+  before(:all) { savon.mock! }
+  after(:all)  { savon.unmock! }
   it 'parses url' do
-    stub_request(
-      :post,
-      'http://fias.nalog.ru/WebServices/Public/DownloadService.asmx'
-    ).with(described_class::OPTIONS).to_return(
-      status: 200,
-      body: '<FiasCompleteDbfUrl>http://www.ya.ru</FiasCompleteDbfUrl>'
-    )
+    fixture = File.read('spec/fixtures/response.xml')
+    savon.expects(:get_last_download_file_info).returns(fixture)
+    response = new_client(raise_errors: false).call(:get_last_download_file_info)
+    expect(response).to be_successful
+    expect(response.http.body).to match(/fias_dbf.rar/)
+  end
 
-    expect(described_class.url).to eq('http://www.ya.ru')
+  def new_client(globals = {})
+    defaults = {
+        endpoint: 'http://example.com',
+        namespace: 'http://v1.example.com',
+        log: false
+    }
+    Savon.client defaults.merge globals
   end
 end

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <soap:Body><GetLastDownloadFileInfoResponse xmlns="http://fias.nalog.ru/WebServices/Public/DownloadService.asmx">
+      <GetLastDownloadFileInfoResult>
+        <VersionId>215</VersionId>
+        <TextVersion>БД ФИАС от 26.10.2015</TextVersion>
+        <FiasCompleteDbfUrl>http://fias.nalog.ru/Public/Downloads/20151026/fias_dbf.rar</FiasCompleteDbfUrl>
+        <FiasCompleteXmlUrl>http://fias.nalog.ru/Public/Downloads/20151026/fias_xml.rar</FiasCompleteXmlUrl>
+        <FiasDeltaDbfUrl>http://fias.nalog.ru/Public/Downloads/20151026/fias_delta_dbf.rar</FiasDeltaDbfUrl>
+        <FiasDeltaXmlUrl>http://fias.nalog.ru/Public/Downloads/20151026/fias_delta_xml.rar</FiasDeltaXmlUrl>
+        <Kladr4ArjUrl>http://fias.nalog.ru/Public/Downloads/20151026/BASE.ARJ</Kladr4ArjUrl>
+        <Kladr47ZUrl>http://fias.nalog.ru/Public/Downloads/20151026/BASE.7Z</Kladr47ZUrl>
+      </GetLastDownloadFileInfoResult>
+    </GetLastDownloadFileInfoResponse>
+  </soap:Body>
+</soap:Envelope>
