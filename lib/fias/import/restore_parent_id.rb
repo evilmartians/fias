@@ -5,6 +5,7 @@ module Fias
         @scope = scope
         @key = options.fetch(:key, :aoguid)
         @parent_key = options.fetch(:parent_key, :parentguid)
+        @nextid_key = options.fetch(:nextid_key, :nextid)
         @id = options.fetch(:id, :id)
         @parent_id = options.fetch(:parent_id, :parent_id)
       end
@@ -18,11 +19,13 @@ module Fias
       private
 
       def records
-        @records ||= @scope.select_map([@id, @key, @parent_key])
+        @records ||= @scope.select_map([@id, @key, @parent_key, @nextid_key])
       end
 
       def records_by_key
-        @records_by_key ||= records.index_by { |r| r[1] }
+        @records_by_key ||= {}.tap do |rbk|
+          records.each { |r| rbk[r[1]] = r if r[3].blank? }
+        end
       end
 
       def id_parent_id_tuples
