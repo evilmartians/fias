@@ -20,6 +20,7 @@ namespace :fias do
           total: table.dbf.record_count,
           format: '%a |%B| [%E] (%c/%C) %p%%'
         )
+        next if table.dbf.record_count.eql? 0
 
         table.encode { bar.increment }
         table.copy
