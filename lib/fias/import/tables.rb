@@ -46,7 +46,7 @@ module Fias
         alter = UUID[name.to_s[/^\D+/].to_sym]
         column_name = column.name.downcase
 
-        parse_c_def(column.schema_definition).tap do |c_def|
+        parse_c_def(column.table.activerecord_schema_definition(column)).tap do |c_def|
           c_def[1] = :uuid if alter && alter.include?(column_name)
           c_def[1] = :text if c_def[1] == :string
         end
