@@ -43,10 +43,11 @@ module Fias
       end
 
       def column_for(name, column)
-        alter = UUID[name]
+        alter = UUID[name.to_s[/^\D+/].to_sym]
         column_name = column.name.downcase
 
-        schema_definition = if Gem.loaded_specs['dbf'].version.to_s < '3.1.1'
+
+        schema_definition = if Gem.loaded_specs['dbf'].version.to_s < '3.1.0'
                               column.schema_definition
                             else
                               column.table.activerecord_schema_definition(column)
@@ -57,6 +58,7 @@ module Fias
         #    column.schema_definition # dbf version < 3.1.1
         # end
         parse_c_def(schema_definition).tap do |c_def|
+     
           c_def[1] = :uuid if alter && alter.include?(column_name)
           c_def[1] = :text if c_def[1] == :string
         end
@@ -70,12 +72,16 @@ module Fias
       end
 
       def uuid_column_types(name)
-        uuid = UUID[name] || []
+        uuid = UUID[name.to_s[/^\D+/].to_sym] || []
         Hash[*uuid.zip([:uuid] * uuid.size).flatten]
       end
 
       UUID = {
-        address_objects: %w(aoguid aoid previd nextid parentguid)
+         addrob: %w(aoguid aoid previd nextid parentguid normdoc),
+         house: %w(aoguid houseguid houseid normdoc),
+         stead: %w(steadguid parentguid steadid nextid previd normdoc),
+         room: %w(roomid roomguid houseguid nextid previd normdoc),
+         nordoc: %w(normdocid)
       }
 
       DEFAULT_PREFIX = 'fias'

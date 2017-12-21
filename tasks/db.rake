@@ -14,12 +14,27 @@ namespace :fias do
   desc 'Import FIAS data (PREFIX, FIAS_PATH to dbfs, DATABASE_URL and TABLES)'
   task :import do
     within_connection do |tables|
+      db = Sequel.connect(ENV['DATABASE_URL'])
+      ordered_presented_tables =
+         tables.copy.map(&:table_name).select do |table_name|
+            db.table_exists? table_name
+         end
+
+      border_index = 0
+
+      ordered_presented_tables.reverse.each do |table|
+        break if db[table].count > 0
+        border_index = ordered_presented_tables.index table
+      end
+
       tables.copy.each do |table|
+        next if (ordered_presented_tables.index(table.table_name) < border_index)
         puts "Encoding #{table.table_name}..."
         bar = ProgressBar.create(
           total: table.dbf.record_count,
           format: '%a |%B| [%E] (%c/%C) %p%%'
         )
+        next if table.dbf.record_count.eql? 0
 
         table.encode { bar.increment }
         table.copy
