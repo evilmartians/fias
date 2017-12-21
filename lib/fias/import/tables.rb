@@ -46,7 +46,17 @@ module Fias
         alter = UUID[name]
         column_name = column.name.downcase
 
-        parse_c_def(column.schema_definition).tap do |c_def|
+        schema_definition = if Gem.loaded_specs['dbf'].version.to_s < '3.1.1'
+                              column.schema_definition
+                            else
+                              column.table.activerecord_schema_definition(column)
+                            end
+        # schema_definition = begin
+        #    column.table.activerecord_schema_definition(column) # dbf version >= 3.1.1
+        # rescue
+        #    column.schema_definition # dbf version < 3.1.1
+        # end
+        parse_c_def(schema_definition).tap do |c_def|
           c_def[1] = :uuid if alter && alter.include?(column_name)
           c_def[1] = :text if c_def[1] == :string
         end
