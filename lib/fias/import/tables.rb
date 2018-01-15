@@ -57,6 +57,7 @@ module Fias
         # rescue
         #    column.schema_definition # dbf version < 3.1.1
         # end
+        # Проверка связи github и основного проекта
         parse_c_def(schema_definition).tap do |c_def|
      
           c_def[1] = :uuid if alter && alter.include?(column_name)
