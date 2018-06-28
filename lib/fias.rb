@@ -8,18 +8,18 @@ module Fias
 
     def indivisible_words
       @indivisible_words ||=
-        config
-        .synonyms
-        .flatten
-        .find_all { |w| w.include?(' ') }
-        .sort_by(&:size)
-        .reverse
-        .freeze
+          config
+              .synonyms
+              .flatten
+              .find_all { |w| w.include?(' ') }
+              .sort_by(&:size)
+              .reverse
+              .freeze
     end
 
     def word
       @word ||=
-        /(#{ANNIVESARIES}|#{indivisible_words.join('|')}|[#{LETTERS}\"\'\d\.\)\(\/\-]+)(\s|\,|$)/ui
+          /(#{ANNIVESARIES}|#{indivisible_words.join('|')}|[#{LETTERS}\"\'\d\.\)\(\/\-]+)(\s|\,|$)/ui
     end
   end
 
@@ -66,7 +66,7 @@ require 'fias/railtie' if defined?(Rails)
 
 Fias.configure do |config|
   config.add_name('автономный округ', 'Аокр.',['А.О.'])
-  config.add_name('автономная область', 'АО',['А.обл.', 'Аобл.'])
+  config.add_name('автономная область', 'АО',['А.обл.', 'Аобл.','Аобл'])
   config.add_name('город', 'г.')
   config.add_name('край', 'край')
   config.add_name('область', 'обл.')
@@ -266,30 +266,30 @@ Fias.configure do |config|
   config.add_name('Территория ФХ', 'тер.ф.х.',['тер фх','тер.фх.'])
   config.add_name('Усадьба', 'ус.')
   config.add_name('Юрты', 'ю.')
-  config.add_name('Земельный участок', 'з/у')
+  config.add_name('Земельный участок', 'з/у',['земельный участок'])
 
   config.add_exception(
-    'Чувашская Республика - Чувашия', 'Чувашия'
+      'Чувашская Республика - Чувашия', 'Чувашия'
   )
 
   config.add_exception(
-    'Ханты-Мансийский Автономный округ - Югра',
-    'Ханты-Мансийский Автономный округ - Югра'
+      'Ханты-Мансийский Автономный округ - Югра',
+      'Ханты-Мансийский Автономный округ - Югра'
   )
 
   config.add_replacement(
-      'Чувашская Республика -', ['Чувашская Респ.', 'Чувашская Республика']
+      'Чувашская Республика -',[ 'Чувашская Респ.', 'Чувашская Республика']
   )
 
   proper_names =
-    File.readlines(File.join(File.dirname(__FILE__), '../config/names.txt'))
+      File.readlines(File.join(File.dirname(__FILE__), '../config/names.txt'))
 
   proper_names.map(&:strip).each do |name|
     config.add_proper_name(name)
   end
 
   synonyms =
-    YAML.load_file(File.join(File.dirname(__FILE__), '../config/synonyms.yml'))
+      YAML.load_file(File.join(File.dirname(__FILE__), '../config/synonyms.yml'))
 
   synonyms.each do |synonym|
     config.add_synonym(*synonym)

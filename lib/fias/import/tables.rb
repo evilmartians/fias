@@ -18,7 +18,8 @@ module Fias
 
       def copy
         @files.map do |name, dbf|
-          Copy.new(@db, table_name(name), dbf, uuid_column_types(name))
+          #Copy.new(@db, table_name(name), dbf, uuid_column_types(name))
+          Fias::Import::Copy.new(@db, table_name(name), dbf, uuid_column_types(name))
         end
       end
 
@@ -59,7 +60,7 @@ module Fias
         # end
         # Проверка связи github и основного проекта
         parse_c_def(schema_definition).tap do |c_def|
-     
+
           c_def[1] = :uuid if alter && alter.include?(column_name)
           c_def[1] = :text if c_def[1] == :string
         end
@@ -78,11 +79,11 @@ module Fias
       end
 
       UUID = {
-         addrob: %w(aoguid aoid previd nextid parentguid normdoc),
-         house: %w(aoguid houseguid houseid normdoc),
-         stead: %w(steadguid parentguid steadid nextid previd normdoc),
-         room: %w(roomid roomguid houseguid nextid previd normdoc),
-         nordoc: %w(normdocid)
+          addrob: %w(aoguid aoid previd nextid parentguid normdoc),
+          house: %w(aoguid houseguid houseid normdoc),
+          stead: %w(steadguid parentguid steadid nextid previd normdoc),
+          room: %w(roomid roomguid houseguid nextid previd normdoc),
+          nordoc: %w(normdocid)
       }
 
       DEFAULT_PREFIX = 'fias'

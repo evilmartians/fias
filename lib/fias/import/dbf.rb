@@ -33,62 +33,62 @@ module Fias
 
       private
 
-      def open_files(encoding)
-        TABLES.each do |accessor, dbf_filename|
-          filename = File.join(@path, dbf_filename)
+        def open_files(encoding)
+          TABLES.each do |accessor, dbf_filename|
+            filename = File.join(@path, dbf_filename)
 
-          next unless File.exist?(filename)
+            next unless File.exist?(filename)
 
-          dbf = DBF::Table.new(filename, nil, encoding)
-          @files[accessor] = dbf if dbf
-        end
-      end
-
-      def self.n_tables(title)
-        tables = (1..99).map do |n|
-          [
-            format('%s%0.2d', title, n).to_sym,
-            format('%s%0.2d.DBF', title.upcase, n)
-          ]
+            dbf = DBF::Table.new(filename, nil, encoding)
+            @files[accessor] = dbf if dbf
+          end
         end
 
-        tables.flatten!
+        def self.n_tables(title)
+          tables = (1..99).map do |n|
+            [
+                format('%s%0.2d', title, n).to_sym,
+                format('%s%0.2d.DBF', title.upcase, n)
+            ]
+          end
 
-        Hash[*tables]
-      end
+          tables.flatten!
 
-      ADDRESS_TABLES = n_tables('addrob')
-      HOUSE_TABLES = n_tables('house')
-      NORDOC_TABLES = n_tables('nordoc')
-      STEAD_TABLES = n_tables('stead')
-      ROOM_TABLES = n_tables('room')
+          Hash[*tables]
+        end
 
-      TABLES = {
-         address_object_types: 'SOCRBASE.DBF',
-         current_statuses: 'CURENTST.DBF',
-         actual_statuses: 'ACTSTAT.DBF',
-         operation_statuses: 'OPERSTAT.DBF',
-         center_statuses: 'CENTERST.DBF',
-         interval_statuses: 'INTVSTAT.DBF',
-         estate_statues: 'ESTSTAT.DBF',
-         structure_statuses: 'STRSTAT.DBF',
-         house_intervals: 'HOUSEINT.DBF',
-         landmarks: 'LANDMARK.DBF',
-         nordoc_types: 'NDOCTYPE.DBF',
-         house_state_statuses: 'HSTSTAT.DBF'
-      }.merge(
-         ADDRESS_TABLES
-      ).merge(
-         HOUSE_TABLES
-      ).merge(
-         NORDOC_TABLES
-      ).merge(
-         STEAD_TABLES
-      ).merge(
-         ROOM_TABLES
-      )
+        ADDRESS_TABLES = n_tables('addrob')
+        HOUSE_TABLES = n_tables('house')
+        NORDOC_TABLES = n_tables('nordoc')
+        STEAD_TABLES = n_tables('stead')
+        ROOM_TABLES = n_tables('room')
 
-      DEFAULT_ENCODING = Encoding::CP866
+        TABLES = {
+            address_object_types: 'SOCRBASE.DBF',
+            current_statuses: 'CURENTST.DBF',
+            actual_statuses: 'ACTSTAT.DBF',
+            operation_statuses: 'OPERSTAT.DBF',
+            center_statuses: 'CENTERST.DBF',
+            interval_statuses: 'INTVSTAT.DBF',
+            estate_statues: 'ESTSTAT.DBF',
+            structure_statuses: 'STRSTAT.DBF',
+            house_intervals: 'HOUSEINT.DBF',
+            landmarks: 'LANDMARK.DBF',
+            nordoc_types: 'NDOCTYPE.DBF',
+            house_state_statuses: 'HSTSTAT.DBF'
+        }.merge(
+            ADDRESS_TABLES
+        ).merge(
+            HOUSE_TABLES
+        ).merge(
+            NORDOC_TABLES
+        ).merge(
+            STEAD_TABLES
+        ).merge(
+            ROOM_TABLES
+        )
+
+        DEFAULT_ENCODING = Encoding::CP866
     end
   end
 end
