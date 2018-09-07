@@ -48,7 +48,7 @@ module Fias
         column_name = column.name.downcase
 
 
-        schema_definition = if Gem.loaded_specs['dbf'].version.to_s < '3.1.0'
+        schema_definition = if Gem.loaded_specs['dbf'].version.to_s < '3.1.1'
                               column.schema_definition
                             else
                               column.table.activerecord_schema_definition(column)
