@@ -75,7 +75,9 @@ module Fias
             house_intervals: 'HOUSEINT.DBF',
             landmarks: 'LANDMARK.DBF',
             nordoc_types: 'NDOCTYPE.DBF',
-            house_state_statuses: 'HSTSTAT.DBF'
+            house_state_statuses: 'HSTSTAT.DBF',
+            flat_types: 'FLATTYPE.DBF',
+            room_types: 'ROOMTYPE.DBF'
         }.merge(
             ADDRESS_TABLES
         ).merge(
