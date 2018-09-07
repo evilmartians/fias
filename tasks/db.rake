@@ -15,8 +15,9 @@ namespace :fias do
   task :import do
     within_connection do |tables|
       db = Sequel.connect(ENV['DATABASE_URL'])
+      tables_array = tables.copy
       ordered_presented_tables =
-         tables.copy.map(&:table_name).select do |table_name|
+         tables_array.map(&:table_name).select do |table_name|
            db.table_exists? table_name
          end
       ordered_presented_tables = fias_sorter(ordered_presented_tables)
@@ -27,12 +28,18 @@ namespace :fias do
         break if db[table].count > 0
         border_index = ordered_presented_tables.index table
       end
-
-      total_records = tables.copy.map{|table| table.dbf.record_count}.flatten.compact.sum
+      total_records = tables_array.map{|table| table.dbf.record_count}.flatten.compact.sum
+      files_count = tables_array.count
       start_time = Time.now
       record_counter = 0
-      fias_sorter(tables.copy, 'table_name').each do |table|
-        next if (ordered_presented_tables.index(table.table_name) < border_index)
+      table_counter = 0
+      fias_sorter(tables_array, 'table_name').each do |table|
+        table_counter += 1
+        if (ordered_presented_tables.index(table.table_name) < border_index)
+          record_counter += table.dbf.record_count
+          next
+        end
+        #raise 'Super_error' if table_counter > 1
         puts "Encoding #{table.table_name}..."
         bar = ProgressBar.create(
            total: table.dbf.record_count,
@@ -46,11 +53,12 @@ namespace :fias do
            time_per_record = passed_time.to_f/record_counter
            total_time_forecast = time_per_record*total_records
            elapsed_time = total_time_forecast - passed_time
-           bar.format = "%a |%B| [%E] (%c/%C) %p%% Всего записей (#{record_counter}/#{total_records}) Времени прошло/осталось/всего (#{sprintf('%.1f',passed_time)}/#{sprintf('%.1f',elapsed_time)}/#{sprintf('%.1f',total_time_forecast)}) Времени на запись #{sprintf('%.5f',time_per_record)}"
+           bar.format = "%a |%B| [%E] (%c/%C) %p%% Файл (#{table_counter}/#{files_count}). Всего записей (#{record_counter}/#{total_records}) #{(record_counter*100.0/total_records).round(0)}%. Времени прошло/осталось/всего (#{sprintf('%.1f',passed_time)}/#{sprintf('%.1f',elapsed_time)}/#{sprintf('%.1f',total_time_forecast)}) Времени на запись #{sprintf('%.5f',time_per_record)}"
            bar.increment
         end
         table.copy
       end
+      puts IO.readlines('/proc/loadavg').first.split[0..2].map{|e| e.to_f}
     end
   end
 
