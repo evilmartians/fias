@@ -17,8 +17,9 @@ namespace :fias do
       db = Sequel.connect(ENV['DATABASE_URL'])
       ordered_presented_tables =
          tables.copy.map(&:table_name).select do |table_name|
-            db.table_exists? table_name
+           db.table_exists? table_name
          end
+      ordered_presented_tables = fias_sorter(ordered_presented_tables)
 
       border_index = 0
 
@@ -27,16 +28,27 @@ namespace :fias do
         border_index = ordered_presented_tables.index table
       end
 
-      tables.copy.each do |table|
+      total_records = tables.copy.map{|table| table.dbf.record_count}.flatten.compact.sum
+      start_time = Time.now
+      record_counter = 0
+      fias_sorter(tables.copy, 'table_name').each do |table|
         next if (ordered_presented_tables.index(table.table_name) < border_index)
         puts "Encoding #{table.table_name}..."
         bar = ProgressBar.create(
-          total: table.dbf.record_count,
-          format: '%a |%B| [%E] (%c/%C) %p%%'
+           total: table.dbf.record_count,
+           format: "%a |%B| [%E] (%c/%C) %p%% Всего записей 0 из #{total_records}"
         )
         next if table.dbf.record_count.eql? 0
 
-        table.encode { bar.increment }
+        table.encode do
+           record_counter += 1
+           passed_time = Time.now - start_time
+           time_per_record = passed_time.to_f/record_counter
+           total_time_forecast = time_per_record*total_records
+           elapsed_time = total_time_forecast - passed_time
+           bar.format = "%a |%B| [%E] (%c/%C) %p%% Всего записей (#{record_counter}/#{total_records}) Времени прошло/осталось/всего (#{sprintf('%.1f',passed_time)}/#{sprintf('%.1f',elapsed_time)}/#{sprintf('%.1f',total_time_forecast)}) Времени на запись #{sprintf('%.5f',time_per_record)}"
+           bar.increment
+        end
         table.copy
       end
     end
@@ -50,6 +62,30 @@ namespace :fias do
     end
 
     Sequel.connect(ENV['DATABASE_URL'])
+  end
+
+  def fias_sorter(tables_array, methods=nil)
+    primary_region = '02'
+    methods = [methods].flatten.compact
+    tables_array.sort do |first_table, second_table|
+      first = methods.inject(first_table){|first_value, method| first_value.send(method)}.to_s
+      second = methods.inject(second_table){|first_value, method| first_value.send(method)}.to_s
+      if first[/#{primary_region}$/]
+        if second[/#{primary_region}$/]
+          first <=> second
+        else
+          -1
+        end
+      else
+        if second[/#{primary_region}$/] || (first[/\d\d$/] && second[/\D\D$/])
+          1
+        elsif first[/\D\D$/] && second[/\d\d$/]
+          -1
+        else
+          first <=> second
+        end
+      end
+    end
   end
 
   def within_connection(&block)
