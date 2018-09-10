@@ -18,6 +18,8 @@ module Fias
 
       def copy
         @files.map do |name, dbf|
+          ap name
+          ap dbf
           #Copy.new(@db, table_name(name), dbf, uuid_column_types(name))
           Fias::Import::Copy.new(@db, table_name(name), dbf, uuid_column_types(name))
         end
