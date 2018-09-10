@@ -1,96 +1,94 @@
 module Fias
   module Import
-    class Dbf
-      def initialize(path, encoding = DEFAULT_ENCODING)
-        @path = path
-        @files = {}
-
-        unless Dir.exist?(@path)
-          fail ArgumentError, "FIAS database path #{@path} does not exists"
-        end
-
-        open_files(encoding)
-      end
-
-      def only(*names)
-        return @files if names.empty?
-
-        names = names.map do |name|
-          name = name.to_sym
-          name == :addresses ? ADDRESS_TABLES.keys : name
-          name == :houses ? HOUSE_TABLES.keys : name
-          name == :nordocs ? NORDOC_TABLES.keys : name
-          name == :rooms ? ROOM_TABLES.keys : name
-          name == :steads ? STEAD_TABLES.keys : name
-        end
-
-        names.flatten!
-
-        @files.slice(*names)
+    class Tables
+      def initialize(db, files, prefix = DEFAULT_PREFIX)
+        @db = db
+        @files = files
+        @prefix = prefix
       end
 
       attr_reader :files
 
+      def create
+        @files.each do |name, dbf|
+          next if dbf.blank?
+          create_table(name, dbf)
+        end
+      end
+
+      def copy
+        @files.map do |name, dbf|
+          ap name
+          ap dbf
+          #Copy.new(@db, table_name(name), dbf, uuid_column_types(name))
+          Fias::Import::Copy.new(@db, table_name(name), dbf, uuid_column_types(name))
+        end
+      end
+
       private
 
-        def open_files(encoding)
-          TABLES.each do |accessor, dbf_filename|
-            filename = File.join(@path, dbf_filename)
+      def table_name(name)
+        [@prefix, name].delete_if(&:blank?).join('_').to_sym
+      end
 
-            next unless File.exist?(filename)
-
-            dbf = DBF::Table.new(filename, nil, encoding)
-            @files[accessor] = dbf if dbf
-          end
+      def create_table(name, dbf)
+        columns = columns_for(name, dbf)
+        @db.create_table(table_name(name)) do
+          primary_key :id
+          columns.each { |args| column(*args) }
         end
+      end
 
-        def self.n_tables(title)
-          tables = (1..99).map do |n|
-            [
-                format('%s%0.2d', title, n).to_sym,
-                format('%s%0.2d.DBF', title.upcase, n)
-            ]
-          end
-
-          tables.flatten!
-
-          Hash[*tables]
+      def columns_for(name, dbf)
+        dbf.columns.map do |column|
+          column_for(name, column)
         end
+      end
 
-        ADDRESS_TABLES = n_tables('addrob')
-        HOUSE_TABLES = n_tables('house')
-        NORDOC_TABLES = n_tables('nordoc')
-        STEAD_TABLES = n_tables('stead')
-        ROOM_TABLES = n_tables('room')
+      def column_for(name, column)
+        alter = UUID[name.to_s[/^\D+/].to_sym]
+        column_name = column.name.downcase
 
-        TABLES = {
-            address_object_types: 'SOCRBASE.DBF',
-            current_statuses: 'CURENTST.DBF',
-            actual_statuses: 'ACTSTAT.DBF',
-            operation_statuses: 'OPERSTAT.DBF',
-            center_statuses: 'CENTERST.DBF',
-            interval_statuses: 'INTVSTAT.DBF',
-            estate_statues: 'ESTSTAT.DBF',
-            structure_statuses: 'STRSTAT.DBF',
-            house_intervals: 'HOUSEINT.DBF',
-            landmarks: 'LANDMARK.DBF',
-            nordoc_types: 'NDOCTYPE.DBF',
-            house_state_statuses: 'HSTSTAT.DBF',
-            flat_types: 'FLATTYPE.DBF',
-            room_types: 'ROOMTYPE.DBF'
-        }.merge(
-            ADDRESS_TABLES
-        ).merge(
-            HOUSE_TABLES
-        ).merge(
-            NORDOC_TABLES
-        ).merge(
-            STEAD_TABLES
-        ).merge(
-            ROOM_TABLES
-        )
 
-        DEFAULT_ENCODING = Encoding::CP866
+        schema_definition = if Gem.loaded_specs['dbf'].version.to_s < '3.1.1'
+                              column.schema_definition
+                            else
+                              column.table.activerecord_schema_definition(column)
+                            end
+        # schema_definition = begin
+        #    column.table.activerecord_schema_definition(column) # dbf version >= 3.1.1
+        # rescue
+        #    column.schema_definition # dbf version < 3.1.1
+        # end
+        # Проверка связи github и основного проекта
+        parse_c_def(schema_definition).tap do |c_def|
+
+          c_def[1] = :uuid if alter && alter.include?(column_name)
+          c_def[1] = :text if c_def[1] == :string
+        end
+      end
+
+      def parse_c_def(c_def)
+        c_def = c_def.strip.split(',').map(&:strip)
+        name = c_def[0][1..-2]
+        type = c_def[1][1..-1]
+        [name, type].map(&:to_sym)
+      end
+
+      def uuid_column_types(name)
+        uuid = UUID[name.to_s[/^\D+/].to_sym] || []
+        Hash[*uuid.zip([:uuid] * uuid.size).flatten]
+      end
+
+      UUID = {
+          addrob: %w(aoguid aoid previd nextid parentguid normdoc),
+          house: %w(aoguid houseguid houseid normdoc),
+          stead: %w(steadguid parentguid steadid nextid previd normdoc),
+          room: %w(roomid roomguid houseguid nextid previd normdoc),
+          nordoc: %w(normdocid)
+      }
+
+      DEFAULT_PREFIX = 'fias'
     end
   end
 end
