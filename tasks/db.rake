@@ -32,14 +32,11 @@ namespace :fias do
       files_count = tables_array.count
       start_time = Time.now
       record_counter = 0
-      table_counter = 0
       fias_sorter(tables_array, 'table_name').each do |table|
-        table_counter += 1
         if (ordered_presented_tables.index(table.table_name) < border_index)
           record_counter += table.dbf.record_count
           next
         end
-        #raise 'Super_error' if table_counter > 1
         puts "Encoding #{table.table_name}..."
         bar = ProgressBar.create(
            total: table.dbf.record_count,
@@ -59,6 +56,7 @@ namespace :fias do
         table.copy
       end
       puts IO.readlines('/proc/loadavg').first.split[0..2].map{|e| e.to_f}
+      puts %x(free)
     end
   end
 
