@@ -13,7 +13,7 @@ namespace :fias do
     end
   end
 
-  desc 'Import FIAS data (PREFIX, FIAS_PATH to dbfs, DATABASE_URL and TABLES)'
+  desc 'Import FIAS data (PREFIX, FIAS_PATH to dbfs, DATABASE_URL and TABLES), FILES_PORTION and HOME_REGION'
   task :import do
     fias_path = ENV['FIAS_PATH'] || 'tmp/fias'
 
@@ -23,7 +23,7 @@ namespace :fias do
     files_count = filenames.count
 
     sorted_filenames = fias_sorter(filenames, [['split', '.'],'first'])
-    portion_size = 10 # size depends on RAM
+    portion_size = ENV['FILES_PORTION'] || 17 # size depends on RAM
     portions = (sorted_filenames.count/portion_size)+1
 
     start_time = Time.now
@@ -34,7 +34,6 @@ namespace :fias do
       ap '____________________'
 
       within_connection(sorted_filenames[portion_count*portion_size..portion_count*portion_size+portion_size-1]) do |tables|
-        #byebug
         db = Sequel.connect(ENV['DATABASE_URL'])
 
         tables_array = tables.copy
@@ -97,7 +96,7 @@ namespace :fias do
   end
 
   def fias_sorter(tables_array, methods=nil)
-    primary_region = '02'
+    primary_region = ENV['HOME_REGION'].to_i.to_s.rjust(2,'0') || '02'
     methods = [methods].flatten(1).compact
     tables_array.sort do |first_table, second_table|
 
