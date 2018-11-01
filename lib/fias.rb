@@ -152,7 +152,7 @@ Fias.configure do |config|
   config.add_name('платформа', 'платф.')
   config.add_name('площадка', 'пл-ка')
   config.add_name('полустанок', 'полустанок')
-  config.add_name('проспект', 'пр-кт', ['пр', 'просп', 'пр-т'])
+  config.add_name('проспект', 'пр-кт', ['пр-кт.', 'просп', 'пр-т'])
   config.add_name('проезд', 'проезд', ['пр-д', 'прз', 'прд'])
   config.add_name('просек', 'просек')
   config.add_name('просека', 'просека')
