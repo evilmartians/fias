@@ -96,7 +96,7 @@ namespace :fias do
   end
 
   def fias_sorter(tables_array, methods=nil)
-    primary_region = ENV['HOME_REGION'].to_i.to_s.rjust(2,'0') || '02'
+    primary_region = ENV['HOME_REGION'].present? ? ENV['HOME_REGION'].to_i.to_s.rjust(2,'0') : '02'
     methods = [methods].flatten(1).compact
     tables_array.sort do |first_table, second_table|
 

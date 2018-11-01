@@ -3,7 +3,7 @@ module Fias
     module DownloadService
       def url
         response = HTTParty.post(
-          'http://fias.nalog.ru/WebServices/Public/DownloadService.asmx',
+          'https://fias.nalog.ru/WebServices/Public/DownloadService.asmx',
           OPTIONS
         )
 
