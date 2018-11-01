@@ -8,6 +8,8 @@ Ruby wrapper for the Russian [ФИАС](http://fias.nalog.ru) database.
 
 Designed for usage with Ruby on Rails and a PostgreSQL backend.
 
+Эта версия гема используется в адресном сервисе в рабочем проекте, поэтому его работоспособность поддерживается постоянно.
+
 <a href="https://evilmartians.com/?utm_source=fias-gem">
 <img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg" alt="Sponsored by Evil Martians" width="236" height="54">
 </a>

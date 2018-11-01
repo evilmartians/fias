@@ -8,7 +8,7 @@ module Fias
         @table_name = table_name.to_sym
         @dbf = dbf
         @encoder = PgDataEncoder::EncodeForCopy.new(
-          column_types: map_types(types)
+            column_types: map_types(types)
         )
       end
 
@@ -27,36 +27,36 @@ module Fias
 
       private
 
-      def map_types(types)
-        types = types.map do |name, type|
-          index = columns.index(name.to_sym)
-          [index, type] if index
+        def map_types(types)
+          types = types.map do |name, type|
+            index = columns.index(name.to_sym)
+            [index, type] if index
+          end
+          Hash[*types.compact.flatten]
         end
-        Hash[*types.compact.flatten]
-      end
 
-      def columns
-        @columns ||= @dbf.columns.map(&:name).map(&:downcase).map(&:to_sym)
-      end
+        def columns
+          @columns ||= @dbf.columns.map(&:name).map(&:downcase).map(&:to_sym)
+        end
 
-      def prepare
-        @db[@table_name].truncate
-        @db.run('SET client_min_messages TO warning;')
-      end
+        def prepare
+          @db[@table_name].truncate
+          @db.run('SET client_min_messages TO warning;')
+        end
 
-      def copy_into
-        io = @encoder.get_io
+        def copy_into
+          io = @encoder.get_io
 
-        @db.copy_into(@table_name.to_sym, columns: columns, format: :binary) do
-          begin
-            io.readpartial(BLOCK_SIZE)
-          rescue EOFError => _e
-            nil
+          @db.copy_into(@table_name.to_sym, columns: columns, format: :binary) do
+            begin
+              io.readpartial(BLOCK_SIZE)
+            rescue EOFError => _e
+              nil
+            end
           end
         end
-      end
 
-      BLOCK_SIZE = 65_536 # 10_240
+        BLOCK_SIZE = 65_536 # 10_240
     end
   end
 end
