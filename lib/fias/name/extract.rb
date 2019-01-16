@@ -21,11 +21,19 @@ module Fias
         end
 
         def find(name)
-          matches = Fias.config.index.keys.map do |query|
-            match = name.match(/(\s|^)(#{Regexp.escape(query)})(\.|\s|$)/ui)
-            match if match && match[2]
+          matches = []
+          index_regexps.map do |query|
+            match = name.match(query)
+            matches << match if match && match[2]
           end
-          matches.compact
+          matches
+        end
+
+        def index_regexps
+          Fias.config.cache[:name_extract_regexps] ||=
+            Fias.config.index.keys.map do |query|
+              /(\s|^)(#{Regexp.escape(query)})(\.|\s|$)/ui
+            end
         end
 
         def assign_rates(name, matches)
