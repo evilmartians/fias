@@ -19,6 +19,10 @@ module Fias
     attr_reader :index, :longs, :shorts, :aliases, :exceptions, :replacements
     attr_reader :proper_names, :synonyms, :synonyms_index
 
+    def cache
+      @cache ||= {}
+    end
+
     def add_name(long, short, aliases = [])
       @longs[Unicode.downcase(short)] = long
       @shorts[Unicode.downcase(long)] = short
