@@ -37,9 +37,16 @@ module Fias
       end
 
       def columns_for(name, dbf)
-        dbf.columns.map do |column|
-          column_for(name, column)
+        allowed_columns = Fias.config.get_allowed_columns(@prefix + '_' + name.to_s)
+        columns = []
+        dbf.columns.each do |column|
+          if allowed_columns.any?
+            columns << column_for(name, column) if allowed_columns.include?(column.name.downcase.to_sym)
+          else
+            columns << column_for(name, column)
+          end
         end
+        columns
       end
 
       def column_for(name, column)

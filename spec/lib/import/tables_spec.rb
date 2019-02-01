@@ -6,6 +6,15 @@ describe Fias::Import::Tables do
 
   subject { described_class.new(db, files, '_fias') }
 
+  before do
+    columns = {}
+    columns[:_fias_actual_statuses] = [
+      :name,
+      :actstatid
+    ]
+    Fias.config.add_allowed_columns_set(columns)
+  end
+
   it '#create' do
     stub_const('Fias::Import::Tables::UUID', actual_statuses: %w(name))
 
@@ -16,6 +25,7 @@ describe Fias::Import::Tables do
     expect(subject).to receive(:primary_key).with(:id)
     expect(subject).to receive(:column).with(:name, :uuid)
     expect(subject).to receive(:column).with(:actstatid, :float)
+    expect(subject).to_not receive(:column).with(:value, :uuid)
 
     expect { subject.create }.to_not raise_error
   end
