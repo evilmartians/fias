@@ -21,6 +21,10 @@ module Fias
       @word ||=
         /(#{ANNIVESARIES}|#{indivisible_words.join('|')}|[#{LETTERS}\"\'\d\.\)\(\/\-]+)(\s|\,|$)/ui
     end
+
+    def setting(name)
+      config.settings.fetch(name.to_sym)
+    end
   end
 
   LETTERS        = /[а-яА-ЯёЁA-Za-z]/ui
@@ -204,4 +208,6 @@ Fias.configure do |config|
   synonyms.each do |synonym|
     config.add_synonym(*synonym)
   end
+
+  config.add_setting(:parentage_column, :parentage)
 end

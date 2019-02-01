@@ -10,6 +10,7 @@ module Fias
       @replacements = {}
       @synonyms = []
       @synonyms_index = {}
+      @settings = {}
 
       yield(self)
 
@@ -18,6 +19,7 @@ module Fias
 
     attr_reader :index, :longs, :shorts, :aliases, :exceptions, :replacements
     attr_reader :proper_names, :synonyms, :synonyms_index
+    attr_reader :settings
 
     def cache
       @cache ||= {}
@@ -47,6 +49,10 @@ module Fias
     def add_synonym(*names)
       @synonyms << names
       populate_synonyms_index(names)
+    end
+
+    def add_setting(name, value)
+      @settings[name.to_sym] = value
     end
 
     private

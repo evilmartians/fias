@@ -5,7 +5,7 @@ describe Fias::Import::Dbf do
 
   context '#initialize' do
     it 'fails without files' do
-      expect { described_class.new('foo') }.to raise_error
+      expect { described_class.new('foo') }.to raise_error(ArgumentError)
     end
 
     it 'returns correct file list' do

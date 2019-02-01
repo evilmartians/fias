@@ -240,6 +240,12 @@ Performing a search will execute these three steps:
 
 #### Defining an in-app query class
 
+_Attention! From version 1.0.3 we have renamed `ancestry` column to `parentage` for possibility of using Ancestry gem.
+Please, add setting `parentage_column` in your app, if you want to continue use `ancestry` column instead._
+```
+Fias.config.add_setting(:parentage_column, :ancestry)
+```
+
 We'll use the `sequel` gem in this example.
 
 ```ruby
@@ -252,7 +258,7 @@ class Query
     op = Sequel.pg_array_op(:tokens)
 
     DB[:address_objects]
-      .select(:id, :name, :abbr, :parent_id, :ancestry, :forms, :tokens)
+      .select(:id, :name, :abbr, :parent_id, :parentage, :forms, :tokens)
       .where(op.overlaps(tokens))
       .to_a
   end
@@ -262,7 +268,7 @@ end
 `#find` accepts splitted object name (a result of `Fias::Name::Split.split`). It searches all address objects with their tokens matching a given set of tokens. It returns an array of hashes with keys you can see above.
 
 * `:abbr` - FIAS shortname value.
-* `:ancestry` - array of ancestor IDs.
+* `:parentage` - array of ancestor IDs.
 * `:forms` - object name forms (`Fias::Name::Synonyms.forms`)
 * `:tokens` - object name tokens (`Fias::Name::Synonyms.tokens`)
 
@@ -288,7 +294,7 @@ Allowed params are: `%i(region district city subcity street)`
 ```ruby
 query.perform
 #
-# [[13213, {:id=>72344, :name=>"Шолом-Алейхема", :abbr=>"ул", :parent_id=>184027, :ancestry=>[184027, 12550], :forms=>["шолом-
+# [[13213, {:id=>72344, :name=>"Шолом-Алейхема", :abbr=>"ул", :parent_id=>184027, :parentage=>[184027, 12550], :forms=>["шолом-
 # алейхема"], :tokens=>["шолом-алейхема"], :key=>:street}]]
 ```
 
