@@ -6,7 +6,11 @@ namespace :fias do
   desc 'Create FIAS tables (PREFIX, FIAS_PATH to dbfs, DATABASE_URL and TABLES)'
   task :create_tables do
     within_connection do |tables|
-      tables.create
+      begin
+        tables.create
+      rescue =>err
+        puts err 
+      end
       puts "#{tables.files.keys.join(', ')} created."
     end
   end
